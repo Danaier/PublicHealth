@@ -33,8 +33,10 @@ def get_img_path_from_url(url):
 
 
 def response_interceptor(request, response):
-    t = response.headers['Content-Type']
-    if request.host == 'www.phsciencedata.cn' and t and 'image' in t:
-        with open("../resources/code-img.jpg", 'wb') as f:
+    content_type = response.headers['Content-Type']
+    print('拦截到链接:', request.url)
+    if request.host == 'phsciencedata.cn' and content_type and 'image' in content_type:
+        print('拦截到图片:', request.url)
+        with open(get_img_path_from_url(request.url), 'wb') as f:
             f.write(response.body)
 
