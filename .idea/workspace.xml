@@ -4,11 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="532e9508-3a5b-4e36-9241-dc0b3f2572fe" name="Changes" comment="feat:手动输入验证码形式">
+    <list default="true" id="532e9508-3a5b-4e36-9241-dc0b3f2572fe" name="Changes" comment="feat:重构Page.py，关联webdriver">
+      <change afterPath="$PROJECT_DIR$/public_health_data_crawler/resources/code-img/code-img.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public_health_data_crawler/selenium_adapter/HiddenPrints.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/public_health_data_crawler/data_to_apply_for/add_data_to_apply_list.py" beforeDir="false" afterPath="$PROJECT_DIR$/public_health_data_crawler/data_to_apply_for/add_data_to_apply_list.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public_health_data_crawler/selenium_adapter/page.py" beforeDir="false" afterPath="$PROJECT_DIR$/public_health_data_crawler/selenium_adapter/Page.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public_health_data_crawler/selenium_adapter/util.py" beforeDir="false" afterPath="$PROJECT_DIR$/public_health_data_crawler/selenium_adapter/util.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public_health_data_crawler/resources/apply_list.json" beforeDir="false" afterPath="$PROJECT_DIR$/public_health_data_crawler/resources/apply_list.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public_health_data_crawler/selenium_adapter/Page.py" beforeDir="false" afterPath="$PROJECT_DIR$/public_health_data_crawler/selenium_adapter/Page.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,7 +44,9 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
     "Python.PH_test.executor": "Run",
+    "Python.Page (1).executor": "Run",
     "Python.add_data_to_apply_list.executor": "Run",
     "Python.ddddocr_test.executor": "Run",
     "Python.page.executor": "Run",
@@ -74,7 +79,7 @@
     </key>
   </component>
   <component name="RunManager" selected="Python.add_data_to_apply_list">
-    <configuration name="PH_test" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="Page (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="PHDataCrawler" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -83,12 +88,12 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/selenium_test/selenium_learning" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/public_health_data_crawler/selenium_adapter" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/selenium_test/selenium_learning/PH_test.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/public_health_data_crawler/selenium_adapter/Page.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -192,10 +197,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python.add_data_to_apply_list" />
+        <item itemvalue="Python.Page (1)" />
         <item itemvalue="Python.Page" />
         <item itemvalue="Python.util" />
         <item itemvalue="Python.ddddocr_test" />
-        <item itemvalue="Python.PH_test" />
       </list>
     </recent_temporary>
   </component>
@@ -223,7 +228,7 @@
       <workItem from="1712538879354" duration="6337000" />
       <workItem from="1712581680669" duration="2388000" />
       <workItem from="1712584245861" duration="5362000" />
-      <workItem from="1712797406966" duration="12222000" />
+      <workItem from="1712797406966" duration="24273000" />
     </task>
     <task id="LOCAL-00001" summary="start:init the proj">
       <option name="closed" value="true" />
@@ -257,7 +262,15 @@
       <option name="project" value="LOCAL" />
       <updated>1712824479963</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="feat:重构Page.py，关联webdriver">
+      <option name="closed" value="true" />
+      <created>1712826365971</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1712826365971</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -275,18 +288,21 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="start:init the proj" />
     <MESSAGE value="feat:add some test codes" />
     <MESSAGE value="feat:start to form the module&quot;add_data_to_apply_list&quot;" />
     <MESSAGE value="feat:手动输入验证码形式" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat:手动输入验证码形式" />
+    <MESSAGE value="feat:重构Page.py，关联webdriver" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat:重构Page.py，关联webdriver" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/PHDataCrawler$ddddocr_test.coverage" NAME="ddddocr_test Coverage Results" MODIFIED="1712803295205" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/proj_test/ocr_test" />
     <SUITE FILE_PATH="coverage/PHDataCrawler$PH_test.coverage" NAME="PH_test Coverage Results" MODIFIED="1712584461986" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/selenium_test/selenium_learning" />
-    <SUITE FILE_PATH="coverage/PHDataCrawler$add_data_to_apply_list.coverage" NAME="add_data_to_apply_list Coverage Results" MODIFIED="1712826241257" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/public_health_data_crawler/data_to_apply_for" />
+    <SUITE FILE_PATH="coverage/PHDataCrawler$add_data_to_apply_list.coverage" NAME="add_data_to_apply_list Coverage Results" MODIFIED="1712844441836" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/public_health_data_crawler/data_to_apply_for" />
     <SUITE FILE_PATH="coverage/PHDataCrawler$selenium_learning_test.coverage" NAME="selenium_learning_test Coverage Results" MODIFIED="1712536505296" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/selenium_test/selenium_learning" />
     <SUITE FILE_PATH="coverage/PHDataCrawler$page.coverage" NAME="page Coverage Results" MODIFIED="1712823441358" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/public_health_data_crawler/selenium_adapter" />
     <SUITE FILE_PATH="coverage/PHDataCrawler$util.coverage" NAME="util Coverage Results" MODIFIED="1712821667117" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/public_health_data_crawler/selenium_adapter" />
+    <SUITE FILE_PATH="coverage/PHDataCrawler$Page__1_.coverage" NAME="Page (1) Coverage Results" MODIFIED="1712828685461" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/public_health_data_crawler/selenium_adapter" />
   </component>
 </project>

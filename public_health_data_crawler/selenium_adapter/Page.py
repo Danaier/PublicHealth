@@ -9,10 +9,9 @@ def function(func_name, *args):
         return f"Function '{func_name}' not found!"
 
 
-class Page(webdriver.Chrome):
+class Page:
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
         self.driver = webdriver.Chrome(*args, **kwargs)
 
     def open_page(self, url):
