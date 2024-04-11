@@ -1,4 +1,4 @@
-from selenium import webdriver
+from seleniumwire import webdriver
 
 page: webdriver.Chrome = webdriver.Chrome()
 
@@ -25,6 +25,10 @@ def find_elements_by_class_name(class_name):
 
 def find_element_by_title(title):
     return page.find_element("title", title)
+
+
+def find_element_by_xpath(xpath):
+    return page.find_element("xpath", xpath)
 
 
 def close_page():

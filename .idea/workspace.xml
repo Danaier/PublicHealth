@@ -4,14 +4,22 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="532e9508-3a5b-4e36-9241-dc0b3f2572fe" name="Changes" comment="feat:add some test codes">
-      <change afterPath="$PROJECT_DIR$/public_health_data_crawler/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public_health_data_crawler/data_to_apply_for/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public_health_data_crawler/data_to_apply_for/add_data_to_apply_list.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public_health_data_crawler/selenium_adapter/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public_health_data_crawler/selenium_adapter/page.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public_health_data_crawler/selenium_adapter/util.py" afterDir="false" />
+    <list default="true" id="532e9508-3a5b-4e36-9241-dc0b3f2572fe" name="Changes" comment="feat:start to form the module&quot;add_data_to_apply_list&quot;">
+      <change afterPath="$PROJECT_DIR$/.idea/webResources.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proj_test/ocr_test/ddddocr_test.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proj_test/selenium_learning/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public_health_data_crawler/driver/chromedriver.exe" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public_health_data_crawler/resources/apply_list.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public_health_data_crawler/data_to_apply_for/add_data_to_apply_list.py" beforeDir="false" afterPath="$PROJECT_DIR$/public_health_data_crawler/data_to_apply_for/add_data_to_apply_list.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public_health_data_crawler/selenium_adapter/page.py" beforeDir="false" afterPath="$PROJECT_DIR$/public_health_data_crawler/selenium_adapter/page.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public_health_data_crawler/selenium_adapter/util.py" beforeDir="false" afterPath="$PROJECT_DIR$/public_health_data_crawler/selenium_adapter/util.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selenium_test/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/proj_test/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selenium_test/selenium_adapter/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/proj_test/selenium_adapter/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selenium_test/selenium_adapter/page.py" beforeDir="false" afterPath="$PROJECT_DIR$/proj_test/selenium_adapter/page.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selenium_test/selenium_learning/PH_test.py" beforeDir="false" afterPath="$PROJECT_DIR$/proj_test/selenium_learning/PH_test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selenium_test/selenium_learning/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/proj_test/ocr_test/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selenium_test/selenium_learning/selenium_learning_test.py" beforeDir="false" afterPath="$PROJECT_DIR$/proj_test/selenium_learning/selenium_learning_test.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,26 +54,34 @@
   "keyToString": {
     "Python.PH_test.executor": "Run",
     "Python.add_data_to_apply_list.executor": "Run",
+    "Python.ddddocr_test.executor": "Run",
+    "Python.page.executor": "Run",
     "Python.selenium_learning_test.executor": "Run",
+    "Python.util.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "git-widget-placeholder": "PHDataCrawler",
     "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "D:/DevProjs/Python/PHDataCrawler/public_health_data_crawler/selenium_adapter",
+    "last_opened_file_path": "D:/DevProjs/Python/PHDataCrawler/local_storage",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "run.code.analysis.last.selected.profile": "aDefault",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\DevProjs\Python\PHDataCrawler\local_storage" />
       <recent name="D:\DevProjs\Python\PHDataCrawler\public_health_data_crawler\selenium_adapter" />
       <recent name="D:\DevProjs\Python\PHDataCrawler\selenium_test" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\DevProjs\Python\PHDataCrawler\public_health_data_crawler\driver" />
     </key>
   </component>
   <component name="RunManager" selected="Python.add_data_to_apply_list">
@@ -115,7 +131,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="selenium_learning_test" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="ddddocr_test" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="PHDataCrawler" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -124,12 +140,58 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/selenium_test/selenium_learning" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/proj_test/ocr_test" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/selenium_test/selenium_learning/selenium_learning_test.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/proj_test/ocr_test/ddddocr_test.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="page" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="PHDataCrawler" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/public_health_data_crawler/selenium_adapter" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/public_health_data_crawler/selenium_adapter/page.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="util" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="PHDataCrawler" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/public_health_data_crawler/selenium_adapter" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/public_health_data_crawler/selenium_adapter/util.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -141,8 +203,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python.add_data_to_apply_list" />
+        <item itemvalue="Python.page" />
+        <item itemvalue="Python.util" />
+        <item itemvalue="Python.ddddocr_test" />
         <item itemvalue="Python.PH_test" />
-        <item itemvalue="Python.selenium_learning_test" />
       </list>
     </recent_temporary>
   </component>
@@ -169,7 +233,8 @@
       <workItem from="1712536103576" duration="799000" />
       <workItem from="1712538879354" duration="6337000" />
       <workItem from="1712581680669" duration="2388000" />
-      <workItem from="1712584245861" duration="1795000" />
+      <workItem from="1712584245861" duration="5362000" />
+      <workItem from="1712797406966" duration="10179000" />
     </task>
     <task id="LOCAL-00001" summary="start:init the proj">
       <option name="closed" value="true" />
@@ -187,7 +252,15 @@
       <option name="project" value="LOCAL" />
       <updated>1712544916439</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="feat:start to form the module&quot;add_data_to_apply_list&quot;">
+      <option name="closed" value="true" />
+      <created>1712586153349</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1712586153349</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -207,11 +280,15 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="start:init the proj" />
     <MESSAGE value="feat:add some test codes" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat:add some test codes" />
+    <MESSAGE value="feat:start to form the module&quot;add_data_to_apply_list&quot;" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat:start to form the module&quot;add_data_to_apply_list&quot;" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/PHDataCrawler$ddddocr_test.coverage" NAME="ddddocr_test Coverage Results" MODIFIED="1712803295205" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/proj_test/ocr_test" />
     <SUITE FILE_PATH="coverage/PHDataCrawler$PH_test.coverage" NAME="PH_test Coverage Results" MODIFIED="1712584461986" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/selenium_test/selenium_learning" />
-    <SUITE FILE_PATH="coverage/PHDataCrawler$add_data_to_apply_list.coverage" NAME="add_data_to_apply_list Coverage Results" MODIFIED="1712585833661" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/public_health_data_crawler/data_to_apply_for" />
+    <SUITE FILE_PATH="coverage/PHDataCrawler$add_data_to_apply_list.coverage" NAME="add_data_to_apply_list Coverage Results" MODIFIED="1712824109656" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/public_health_data_crawler/data_to_apply_for" />
     <SUITE FILE_PATH="coverage/PHDataCrawler$selenium_learning_test.coverage" NAME="selenium_learning_test Coverage Results" MODIFIED="1712536505296" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/selenium_test/selenium_learning" />
+    <SUITE FILE_PATH="coverage/PHDataCrawler$page.coverage" NAME="page Coverage Results" MODIFIED="1712823441358" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/public_health_data_crawler/selenium_adapter" />
+    <SUITE FILE_PATH="coverage/PHDataCrawler$util.coverage" NAME="util Coverage Results" MODIFIED="1712821667117" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/public_health_data_crawler/selenium_adapter" />
   </component>
 </project>
