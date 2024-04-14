@@ -12,6 +12,7 @@ provinces = [
 ]
 
 
+# 点击元素
 def click(web_element):
     try:
         web_element.click()
@@ -21,6 +22,7 @@ def click(web_element):
         pass
 
 
+# 获取元素文本
 def text(web_element):
     return web_element.text \
         if (getattr(web_element, 'text', None) is not None
@@ -28,10 +30,12 @@ def text(web_element):
         else ""
 
 
+# 从url获取图片路径
 def get_img_path_from_url(url):
     return f"../resources/{url.split('/')[-1].split('?')[0]}"
 
 
+# 响应拦截器（废案）
 def response_interceptor(request, response):
     content_type = response.headers['Content-Type']
     print('拦截到链接:', request.url)
@@ -39,4 +43,3 @@ def response_interceptor(request, response):
         print('拦截到图片:', request.url)
         with open(get_img_path_from_url(request.url), 'wb') as f:
             f.write(response.body)
-

@@ -15,3 +15,11 @@ refresh_img_xpath = '//*[@id="mima"]/div[6]/span[2]/img[2]'
 search_text_input_id = "searchText"
 search_btn_id = "searchList"
 add_to_apply_list_btns_class = "btn-jiaru"
+
+data_to_apply_list_btn_id = "show1"
+page_num_input_id = "textnum"
+page_num_table_id = "fenye"
+paged_apply_list_id = "intendApplyData"
+apply_accept_clause_btn_id = "sqtype"
+apply_data_btn_id = "inBtn"
+

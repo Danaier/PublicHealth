@@ -35,5 +35,17 @@ class Page:
     def find_element_by_xpath(self, xpath):
         return self.driver.find_element("xpath", xpath)
 
+    def find_element_by_element_name(self, name):
+        return self.driver.find_element("name", name)
+
+    def find_elements_by_parent_id_and_tag(self, id, tag):
+        return self.driver.find_element("id", id).find_elements("tag name", tag)
+
+    def find_li_elements_by_parent_id(self, id):
+        return self.find_elements_by_parent_id_and_tag(id, "li")
+
+    def find_input_elements_by_parent_id(self, id):
+        return self.find_elements_by_parent_id_and_tag(id, "li")
+
     def close_page(self):
         self.driver.quit()
