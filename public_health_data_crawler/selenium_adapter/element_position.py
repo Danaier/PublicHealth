@@ -21,10 +21,12 @@ search_btn_id = "searchList"
 add_to_apply_list_btns_class = "btn-jiaru"
 
 # 个人中心页面
-data_to_apply_list_btn_id = "show1"
+data_to_apply_list_btn_id = "show1"  # 拟申请
+data_to_download_list_btn_id = "show3"  # 已完成
 page_num_input_id = "textnum"
 page_num_table_id = "fenye"
 paged_apply_list_id = "intendApplyData"
+paged_download_list_id = "finishData"
 apply_accept_clause_btn_id = "sqtype"
 apply_data_btn_id = "inBtn"
 

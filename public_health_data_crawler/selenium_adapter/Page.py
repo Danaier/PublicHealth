@@ -1,5 +1,7 @@
 from seleniumwire import webdriver
 
+from public_health_data_crawler.selenium_adapter.ph_data_crawler_root_path import root_path
+
 
 def function(func_name, *args):
     func = globals().get(func_name)
@@ -12,7 +14,12 @@ def function(func_name, *args):
 class Page:
 
     def __init__(self, *args, **kwargs):
-        self.driver = webdriver.Chrome(*args, **kwargs)
+        options = webdriver.ChromeOptions()
+        prefs = {'profile.default_content_settings.popups': 2,
+                 'download.default_directory': root_path+'\\resources\\downloaded-data\\'}
+        print(root_path+'\\resources\\downloaded-data\\')
+        options.add_experimental_option('prefs', prefs)
+        self.driver = webdriver.Chrome(options=options)
 
     def open_page(self, url):
         self.driver.get(url)
