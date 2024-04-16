@@ -1,3 +1,5 @@
+import time
+
 import ddddocr
 from selenium.common import UnexpectedAlertPresentException
 from selenium.webdriver.common.by import By
@@ -60,3 +62,4 @@ def login_to_phsdc(page):
             continue
         break
     print("登录成功")
+    time.sleep(4)

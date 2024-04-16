@@ -1,5 +1,9 @@
 from selenium.common import ElementNotInteractableException
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
 import time
+
+from selenium.webdriver.support.wait import WebDriverWait
 
 provinces = [
     '北京', '天津', '河北', '山西', '内蒙古',
@@ -13,13 +17,17 @@ provinces = [
 
 
 # 点击元素
-def click(web_element):
-    try:
-        web_element.click()
+def click(web_element, driver=None):
+    if driver:
+        WebDriverWait(driver, 10).until(EC.visibility_of(web_element)).click()
         time.sleep(1)
-    except ElementNotInteractableException:
-        print("点击元素失败")
-        pass
+    else:
+        try:
+            web_element.click()
+            time.sleep(1)
+        except ElementNotInteractableException:
+            print("点击元素失败")
+            pass
 
 
 # 获取元素文本

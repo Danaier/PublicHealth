@@ -12,8 +12,9 @@ def download_data(page):
     with open("../resources/downloaded_data.json", 'r', encoding='utf-8') as downloaded_data_file:
         downloaded_data_dict = defaultdict(list, json.load(downloaded_data_file))
     page.open_page(data_download_url)  # 重新打开页面
-    time.sleep(1)
+    time.sleep(2)
     click(page.find_element_by_id(data_to_download_list_btn_id))  # 点击“已完成”
+    time.sleep(2)
     current_page = max(int(key) for key in downloaded_data_dict.keys())  # 获取已申请进度
     page.find_element_by_id(page_num_input_id).send_keys(str(current_page))  # 输入页数
     click([item for item in page.find_li_elements_by_parent_id(page_num_table_id)
