@@ -1,1 +1,2 @@
 rarfile~=4.2
+PyMySQL~=1.1.0
