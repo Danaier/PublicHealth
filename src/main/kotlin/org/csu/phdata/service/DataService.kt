@@ -11,6 +11,7 @@ import org.csu.phdata.persistence.phdata.CasesRateDao
 import org.csu.phdata.persistence.phdata.DeathDataDao
 import org.csu.phdata.persistence.phdata.DeathRateDao
 import org.ktorm.dsl.*
+import org.ktorm.schema.Table
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.time.LocalDate
@@ -38,22 +39,23 @@ class DataService {
         val month = LocalDate.parse(date)
         val nextMonth = month.plusMonths(1)
 
+        val dao = when (dataType) {
+            Constants.CASESDATA -> casesDataDao
+            Constants.DEATHDATA -> deathDataDao
+            Constants.CASESRATE -> casesRateDao
+            Constants.DEATHRATE -> deathRateDao
+            else -> phDataDao
+        }
 
-        val dao = phDataDao
-//        dao = when (dataType) {
-//            Constants.CASESDATA -> casesDataDao
-//            Constants.DEATHDATA -> deathDataDao
-//            Constants.CASESRATE -> casesRateDao
-//            Constants.DEATHRATE -> deathRateDao
-//            else -> phDataDao
-//        }
 
         val count = dao.count {
-            (it.disease eq disease ) and
-            (it.province eq province) and
-            (it.monthDate between month..nextMonth) and
-            (it.dataValue neq "0")
+            (it.phData.disease eq disease) and
+            (it.phData.province eq province) and
+            (it.phData.monthDate between month..nextMonth) and
+            (it.phData.dataValue neq "0")
         }
+
+
         return CommonResponse.createForSuccess(count)
     }
 }
