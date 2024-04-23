@@ -22,12 +22,21 @@ class DataController {
         dataType: String
     ) = dataService.getDataCount(disease, province, date, dataType)
 
-    @PostMapping("getDataByDiseaseProvinceDate")
-    fun getDataByDiseaseProvinceDate(
+    @PostMapping("getDataBySpecificCondition")
+    fun getDataBySpecificCondition(
         disease: String,
         province: String,
-        date: String,
-        dataType: String
-    ) = dataService.getDataByDiseaseProvinceDate(disease, province, date, dataType)
+        dataType: String,
+        age: String,
+        date: String
+    ) = dataService.getDataBySpecificCondition(disease, province, dataType, age, date)
+
+    @PostMapping("getDataInProvinces")
+    fun getDataInProvinces(
+        disease: String,
+        dataType: String,
+        age: String,
+        date: String
+    ) = dataService.getDataInProvinces(disease, dataType, age, date)
 
 }
