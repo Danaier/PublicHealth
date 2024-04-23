@@ -1,0 +1,78 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+buildscript {
+    repositories {
+        maven {
+            url 'https://maven.aliyun.com/repository/gradle-plugin'
+        }
+        jcenter()
+    }
+}
+
+plugins {
+    id 'org.springframework.boot' version '3.0.1'
+    id 'io.spring.dependency-management' version '1.1.0'
+    id 'org.jetbrains.kotlin.jvm' version '1.7.22'
+    id 'org.jetbrains.kotlin.plugin.spring' version '1.7.22'
+    id "ktorm-tools.ktorm-generator" version "1.2.3"
+}
+
+group = 'org.dye'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '17'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    maven {
+        url "https://maven.aliyun.com/nexus/content/groups/public"
+    }
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-jdbc"
+    implementation 'mysql:mysql-connector-java:8.0.30'
+    implementation 'org.jetbrains.kotlin:kotlin-reflect'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+    implementation 'javax.servlet:javax.servlet-api:4.0.1'
+    compileOnly 'org.projectlombok:lombok'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    annotationProcessor 'org.projectlombok:lombok'
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation group: 'org.apache.directory.studio', name: 'org.apache.commons.collections', version: '3.2.1'
+
+    // 注解
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.14.1'
+    // 实体类映射 Ktorm
+    implementation group: 'org.ktorm', name: 'ktorm-core', version: '3.5.0'
+    implementation group: 'org.ktorm', name: 'ktorm-jackson', version: '3.5.0'
+    // hutool Java 工具类库 - 加密有用到
+    implementation group: 'cn.hutool', name: 'hutool-all', version: '5.8.11'
+    // Redis
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-redis', version: '3.0.1'
+    // Jwt 验证
+    implementation group: 'com.auth0', name: 'java-jwt', version: '4.2.2'
+    // Shiro 安全验证框架
+    implementation 'org.apache.shiro:shiro-spring:1.10.0'
+
+
+}
+
+tasks.withType(KotlinCompile) {
+    kotlinOptions {
+        freeCompilerArgs = ['-Xjsr305=strict']
+        jvmTarget = '17'
+    }
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
