@@ -14,7 +14,7 @@ interface PublicHealthData: Entity<PublicHealthData>{
     val specificDisease:String
     val province: String
     val dataType: String
-    val age: Int
+    val age: String
     val monthDate: LocalDate
     val dataValue:String
 
@@ -25,7 +25,7 @@ interface PublicHealthData: Entity<PublicHealthData>{
      val specificDisease: Column<String>,
      val province: Column<String>,
      val dataType: Column<String>,
-     val age: Column<Int>,
+     val age: Column<String>,
      val monthDate: Column<LocalDate>,
      val dataValue: Column<String>
  )
@@ -44,7 +44,7 @@ val cons = {it: DataTable ->
         dataTable.varchar("specific_disease").bindTo { it.specificDisease },
         dataTable.varchar("province").bindTo { it.province },
         dataTable.varchar("type").bindTo { it.dataType },
-        dataTable.int("age").bindTo { it.age },
+        dataTable.varchar("age").bindTo { it.age },
         dataTable.date("date").bindTo { it.monthDate },
         dataTable.varchar("value").bindTo { it.dataValue }
     )
@@ -60,7 +60,7 @@ object PublicHealthDatas : DataTable("public_health_data") {
         varchar("specific_disease").bindTo { it.specificDisease },
         varchar("province").bindTo { it.province },
         varchar("type").bindTo { it.dataType },
-        int("age").bindTo { it.age },
+        varchar("age").bindTo { it.age },
         date("date").bindTo { it.monthDate },
         varchar("value").bindTo { it.dataValue }
     )
@@ -72,7 +72,7 @@ object CasesDatas : DataTable("cases_table") {
         varchar("specific_disease").bindTo { it.specificDisease },
         varchar("province").bindTo { it.province },
         varchar("type").bindTo { it.dataType },
-        int("age").bindTo { it.age },
+        varchar("age").bindTo { it.age },
         date("date").bindTo { it.monthDate },
         varchar("value").bindTo { it.dataValue }
     )
@@ -84,7 +84,7 @@ object DeathDatas : DataTable("deaths_table") {
         varchar("specific_disease").bindTo { it.specificDisease },
         varchar("province").bindTo { it.province },
         varchar("type").bindTo { it.dataType },
-        int("age").bindTo { it.age },
+        varchar("age").bindTo { it.age },
         date("date").bindTo { it.monthDate },
         varchar("value").bindTo { it.dataValue }
     )
@@ -96,7 +96,7 @@ object CasesRates : DataTable("incidence_rate_table") {
         varchar("specific_disease").bindTo { it.specificDisease },
         varchar("province").bindTo { it.province },
         varchar("type").bindTo { it.dataType },
-        int("age").bindTo { it.age },
+        varchar("age").bindTo { it.age },
         date("date").bindTo { it.monthDate },
         varchar("value").bindTo { it.dataValue }
     )
@@ -108,7 +108,7 @@ object DeathRates : DataTable("mortality_rate_table") {
         varchar("specific_disease").bindTo { it.specificDisease },
         varchar("province").bindTo { it.province },
         varchar("type").bindTo { it.dataType },
-        int("age").bindTo { it.age },
+        varchar("age").bindTo { it.age },
         date("date").bindTo { it.monthDate },
         varchar("value").bindTo { it.dataValue }
     )

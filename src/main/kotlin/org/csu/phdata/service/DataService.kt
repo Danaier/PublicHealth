@@ -30,32 +30,55 @@ class DataService {
     lateinit var deathDataDao: DeathDataDao
     @Autowired
     lateinit var deathRateDao: DeathRateDao
+
+    fun recognizeDao(dataType: String) = when (dataType) {
+        Constants.CASESDATA -> casesDataDao
+        Constants.DEATHDATA -> deathDataDao
+        Constants.CASESRATE -> casesRateDao
+        Constants.DEATHRATE -> deathRateDao
+        else -> phDataDao
+    }
+
     fun getDataCount(
         disease: String,
         province: String,
         date: String,
         dataType:String
-        ): CommonResponse<*> {
+    ): CommonResponse<*> {
+
         val month = LocalDate.parse(date)
         val nextMonth = month.plusMonths(1)
+        val dao = recognizeDao(dataType)
 
-        val dao = when (dataType) {
-            Constants.CASESDATA -> casesDataDao
-            Constants.DEATHDATA -> deathDataDao
-            Constants.CASESRATE -> casesRateDao
-            Constants.DEATHRATE -> deathRateDao
-            else -> phDataDao
-        }
+        return CommonResponse.createForSuccess(
+            dao.count {
+                (it.phData.disease eq disease) and
+                (it.phData.province eq province) and
+                (it.phData.monthDate between month..nextMonth) and
+                (it.phData.dataValue neq "0")
+            }
+        )
 
+    }
 
-        val count = dao.count {
-            (it.phData.disease eq disease) and
-            (it.phData.province eq province) and
-            (it.phData.monthDate between month..nextMonth) and
-            (it.phData.dataValue neq "0")
-        }
+    fun getDataByDiseaseProvinceDate(
+        disease: String,
+        province: String,
+        date: String,
+        dataType: String
+    ): CommonResponse<*> {
 
+        val month = LocalDate.parse(date)
+        val nextMonth = month.plusMonths(1)
+        val dao = recognizeDao(dataType)
 
-        return CommonResponse.createForSuccess(count)
+        return CommonResponse.createForSuccess(
+            dao.findList {
+                (it.phData.disease eq disease) and
+                (it.phData.province eq province) and
+                (it.phData.monthDate between month..nextMonth) and
+                (it.phData.dataValue neq "0")
+            }
+        )
     }
 }
