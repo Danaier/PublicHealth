@@ -7,6 +7,8 @@ import org.csu.phdata.persistence.phdata.CasesDataDao
 import org.csu.phdata.persistence.phdata.CasesRateDao
 import org.csu.phdata.persistence.phdata.DeathDataDao
 import org.csu.phdata.persistence.phdata.DeathRateDao
+import org.csu.phdata.util.DataFieldUtil
+import org.csu.phdata.util.DataFieldUtil.Companion.getAgeInterval
 import org.ktorm.dsl.*
 import org.ktorm.schema.ColumnDeclaring
 import org.springframework.beans.factory.annotation.Autowired
@@ -84,10 +86,15 @@ class DataService {
         disease: String,
         dataType: String,
         age: String,
-        date: String
+        nextAge: String,
+        date: String,
+        nextDate: String
     ): CommonResponse<*> {
         val month = if (date.isNotEmpty()) LocalDate.parse(date) else null
-        val nextMonth = month.let { month?.plusMonths(1) }
+        val nextMonth = month.let {
+            if (nextDate.isNotEmpty()) LocalDate.parse(nextDate) else month?.plusMonths(1)
+        }
+        val ageInterval = getAgeInterval(age, nextAge)
         val dao = recognizeDao(dataType)
 
         val publicHealthDataList = dao.findList { publicHealthData ->
@@ -95,10 +102,22 @@ class DataService {
             conditions += publicHealthData.phData.dataValue neq "0"
             if (disease.isNotEmpty()) conditions += publicHealthData.phData.disease eq disease
             if (month != null && nextMonth != null) conditions += publicHealthData.phData.monthDate between month..nextMonth
-            if (age.isNotEmpty()) conditions += publicHealthData.phData.age eq age
+            if (ageInterval.isNotEmpty()) conditions += publicHealthData.phData.age inList ageInterval
             conditions.reduce { a, b -> a and b }
         }
 
-        return CommonResponse.createForSuccess(publicHealthDataList)
+        val provinceValueMap = mutableMapOf<String, Int>()
+        for (publicHealthData in publicHealthDataList) {
+            val province = DataFieldUtil.convertProvinces(publicHealthData.province)
+            val dataValue = publicHealthData.dataValue.toInt()
+            provinceValueMap[province] = (provinceValueMap[province]?.plus(dataValue))?:(dataValue)
+        }
+        data class ResultData (val name:String, val value: Int)
+        val resultList = mutableListOf<ResultData>()
+        for (key in provinceValueMap.keys) {
+            provinceValueMap[key]?.let { ResultData(key, it) }?.let { resultList.add(it) }
+        }
+
+        return CommonResponse.createForSuccess(resultList)
     }
 }

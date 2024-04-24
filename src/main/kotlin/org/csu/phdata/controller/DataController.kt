@@ -36,7 +36,9 @@ class DataController {
         disease: String,
         dataType: String,
         age: String,
-        date: String
-    ) = dataService.getDataInProvinces(disease, dataType, age, date)
+        nextAge: String,
+        date: String,
+        nextDate: String
+    ) = dataService.getDataInProvinces(disease, dataType, age, nextAge, date, nextDate)
 
 }
