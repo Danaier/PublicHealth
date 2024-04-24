@@ -1,7 +1,7 @@
 
 <template>
   <h1>{{ msg }}</h1>
-  <div id="main" style="width: 600px;height:400px;"></div>
+  <div id="main" style="width: 800px;height:600px;"></div>
 </template>
 
 <style scoped>
@@ -27,6 +27,7 @@ onMounted(() => {
   const chartDom = document.getElementById('main');
   const myChart = echarts.init(chartDom);
   let option;
+  let disease = '病种'
 
   myChart.showLoading();
   axios.get('https://geojson.cn/api/data/china.json').then((response)  => {
@@ -51,16 +52,18 @@ onMounted(() => {
     });
     option = {
       title: {
-        text: 'USA Population Estimates (2012)',
-        subtext: 'Data from www.census.gov',
-        sublink: 'http://www.census.gov/popest/data/datasets.html',
+        text: disease,
+        subtext: '来源：公共卫生科学数据中心',
+        sublink: 'https://www.phsciencedata.cn/',
         left: 'right'
       },
+      // 鼠标悬浮提示
       tooltip: {
-        trigger: 'item',
-        showDelay: 0,
-        transitionDuration: 0.2
+        trigger: 'item',  // 数据项图形触发
+        showDelay: 0,  // 显示延迟，添加显示延迟可以避免频繁切换
+        transitionDuration: 0.2  // 提示框浮层的移动动画过渡时间，单位是 s，设置为 0 的时候会紧跟着鼠标移动
       },
+      // 右侧图例
       visualMap: {
         left: 'right',
         min: 500000,
@@ -84,7 +87,7 @@ onMounted(() => {
         calculable: true
       },
       toolbox: {
-        show: true,
+        show: false,
         //orient: 'vertical',
         left: 'left',
         top: 'top',
