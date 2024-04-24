@@ -2,6 +2,7 @@
 import {onMounted} from 'vue'
 import * as echarts from 'echarts';
 import axios from "axios";
+import http from '../utils/request.js';
 
 onMounted(() => {
 
@@ -10,12 +11,33 @@ onMounted(() => {
   const hitmapChart = echarts.init(hitmap);
   hitmapChart.showLoading();
 
-  let disease = '病种'
-  let showMap = response => {
-    const mapJson = response.data;
-    hitmapChart.hideLoading();
-    echarts.registerMap('China', mapJson);
-    let option = {
+  let findMax = (max, currentValue) => {
+    return max.value > currentValue.value ? max : currentValue;
+  }
+  let findMin = (min, currentValue) => {
+    return min.value < currentValue.value ? min : currentValue;
+  }
+
+  let disease = '百日咳'
+  let dataType = 'cases_data'
+  let dataInProvinces
+  let option
+  http({
+    url: '/data/getDataInProvinces',
+    data: {
+      disease: disease,
+      dataType: dataType,
+      age: '',
+      nextAge: '',
+      date: '2005-01-01',
+      nextDate: '2008-01-01'
+    },
+    method: 'post',
+  }).then(data => {
+    console.log(data);
+    dataInProvinces = data;
+    console.log(dataInProvinces.reduce(findMin, dataInProvinces[0]))
+    option = {
       title: {
           text: disease,
           subtext: '来源：公共卫生科学数据中心',
@@ -31,8 +53,8 @@ onMounted(() => {
       // 右侧图例
       visualMap: {
         left: 'right',
-        min: 500000,
-        max: 38000000,
+        min: dataInProvinces.reduce(findMin, dataInProvinces[0]).value,
+        max: dataInProvinces.reduce(findMax, dataInProvinces[0]).value,
         inRange: {
           color: [
             '#313695',
@@ -64,7 +86,7 @@ onMounted(() => {
       },
       series: [
         {
-          name: '公共卫生数据',
+          name: disease,
           type: 'map',
           roam: true,
           map: 'China',
@@ -73,15 +95,25 @@ onMounted(() => {
               show: true
             }
           },
-          data: [
-            { name: '河北', value: 4822023 }
-          ]
+          data: dataInProvinces
         }
       ]
     };
+    axios.get('https://geojson.cn/api/data/china.json').then(showMap);
+  })
+
+
+
+  // 显示地图
+  let showMap = response => {
+    const mapJson = response.data;
+    hitmapChart.hideLoading();
+    echarts.registerMap('China', mapJson);
     hitmapChart.setOption(option);
   }
-  axios.get('https://geojson.cn/api/data/china.json').then(showMap);
+
+
+
 
 
 });
