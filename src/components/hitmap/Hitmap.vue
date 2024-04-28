@@ -1,8 +1,8 @@
 <script setup>
-import {onMounted, ref} from 'vue'
+import {onMounted, ref, reactive} from 'vue'
 import * as echarts from 'echarts';
 import axios from "axios";
-import http from '../utils/request.js';
+import http from '../../utils/request.js';
 import {dayjs} from "element-plus";
 
 // 工具函数
@@ -16,13 +16,41 @@ let getSum = (total, currentValue) => {
     return total + currentValue.value;
 }
 
-
-const disease = ref('伤寒与副伤寒');
+const disease = ref('包虫病');
 const monthRange = ref([dayjs('2005-01-01'), dayjs('2008-01-01')]);
+const ageRange = ref([6, 14])
+const marks = ref({
+    0: '0-',
+    1: '1-',
+    2: '2-',
+    3: '3-',
+    4: '4-',
+    5: '5-',
+    6: '6-',
+    7: '7-',
+    8: '8-',
+    9: '9-',
+    10: '10-',
+    11: '15-',
+    12: '20-',
+    13: '25-',
+    14: '30-',
+    15: '35-',
+    16: '40-',
+    17: '45-',
+    18: '50-',
+    19: '55-',
+    20: '60-',
+    21: '65-',
+    22: '70-',
+    23: '75-',
+    24: '80-',
+    25: '85及以上'
+})
 
 const diseaseOptions = [
     {value: "出血热", label: "出血热"},
-    {value: "包虫病", label: "包虫病"},
+    {value: "包虫病", label: "包虫病", color: '#ff0000'},
     {value: "急性出血性结膜炎", label: "急性出血性结膜炎"},
     {value: "手足口病", label: "手足口病"},
     {value: "斑疹伤寒", label: "斑疹伤寒"},
@@ -59,16 +87,19 @@ let drawMap = () => {
         data: {
             disease: disease.value,
             dataType: dataType,
-            age: '',
-            nextAge: '',
+            age: marks.value[ageRange.value[0]],
+            nextAge: marks.value[ageRange.value[1]],
             date: dayjs(monthRange.value[0]).format('YYYY-MM-DD'),
             nextDate: dayjs(monthRange.value[1]).format('YYYY-MM-DD')
         },
         method: 'post',
     }).then(data => {
+
         dataInProvinces = data;
         let averageNum = dataInProvinces.reduce(getSum, 0) / dataInProvinces.length;
-        console.log(averageNum)
+        let maxNum = dataInProvinces.reduce(findMax, dataInProvinces[0]).value + averageNum
+        let minNum = dataInProvinces.reduce(findMin, dataInProvinces[0]).value - averageNum
+        minNum = minNum < 0 ? 0 : minNum
 
         option = {
             title: {
@@ -86,8 +117,8 @@ let drawMap = () => {
             // 右侧图例
             visualMap: {
                 left: 'right',
-                min: dataInProvinces.reduce(findMin, dataInProvinces[0]).value - averageNum,
-                max: dataInProvinces.reduce(findMax, dataInProvinces[0]).value + averageNum,
+                min: minNum,
+                max: maxNum,
                 inRange: {
                     color: [
                         '#313695',
@@ -168,7 +199,6 @@ onMounted(() => {
   >
     <el-option
         v-for="item in diseaseOptions"
-        :key="item.value"
         :label="item.label"
         :value="item.value"
     />
@@ -183,7 +213,18 @@ onMounted(() => {
       end-placeholder="结束日期"
       @change="drawMap"
   />
-  <div id="hitmap" style="width: 800px;height:600px;"></div>
+  <!-- 数据地图显示 -->
+  <div id="hitmap" style="width: 1000px;height:750px;"></div>
+  <!-- 年龄范围选择 -->
+  <el-slider
+      v-model="ageRange"
+      range
+      :marks="marks"
+      :min=0
+      :max=25
+      :step=1
+      @change="drawMap"
+  />
 </template>
 
 <style scoped>
