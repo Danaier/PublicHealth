@@ -5,19 +5,10 @@ import {ElMessage} from 'element-plus';
 const http = axios.create({
   baseURL: '/api', // url = base url + request url,
   headers: {
-    'Content-Type': 'application/x-www-form-urlencoded'
+    'Content-Type': 'application/json'
   },
   timeout: 50000,
 });
-
-// 将请求数据转换成功 form-data 接收格式
-http.defaults.transformRequest = [data => {
-    let ret = ''
-    for (let it in data) {
-      ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
-    }
-    return ret
-}]
 
 // 数据请求拦截
 http.interceptors.request.use(

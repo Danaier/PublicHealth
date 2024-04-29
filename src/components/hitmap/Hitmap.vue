@@ -36,6 +36,7 @@ const refresh = () => {
     }).then(drawMap)
 }
 
+
 // 绘制地图
 const drawMap = dataInProvinces => {
     // 计算图例的最大值和最小值
@@ -61,6 +62,7 @@ const drawMap = dataInProvinces => {
     option = _.merge(option, fixedOption)
     axios.get('/china.json').then(updateMapData);
 }
+
 
 // 更新数据
 const updateMapData = response => {
@@ -109,7 +111,7 @@ onMounted(() => {
       @change="refresh"
   />
   <!-- 数据地图显示 -->
-  <div id="hitmap" style="width: 1000px;height:750px;"></div>
+  <div id="hitmap" style="width: 800px;height:600px;"></div>
   <!-- 年龄范围选择 -->
   <el-slider
       v-model="ageRange"
