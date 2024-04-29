@@ -148,7 +148,7 @@ class DataService {
             dataInProvincesVaryInDates.add(ResultData(monthDate, dataInProvincesOfADate))
         }
 
-        return CommonResponse.createForSuccess(dataInProvincesVaryInDates)
+        return CommonResponse.createForSuccess(dataInProvincesVaryInDates.sortedBy { it.date })
     }
 
 }
