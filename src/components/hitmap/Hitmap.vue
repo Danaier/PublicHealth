@@ -7,7 +7,7 @@ import {dayjs} from "element-plus";
 import {diseaseOptions, fixedOption, ageRangeMarks, formatTooltip} from './fixed.js'
 import {findMax, findMin, getSum} from "../../utils/calculation.js";
 import _ from 'lodash';
-import {VideoPlay} from '@element-plus/icons-vue'
+import {VideoPause, VideoPlay} from "@element-plus/icons-vue";
 
 
 // 设立一些初始值
@@ -19,6 +19,8 @@ const dataType = ref('cases_data')
 // 日期变化进度条
 const currentChosenDate = ref('05年01月')
 const currentDatePercentage = ref(0)
+const pauseTheProgress = ref(false)
+const buttonIcon = ref('el-icon-plus')
 
 let option
 let hitmap
@@ -27,6 +29,7 @@ let hitmapChart
 
 // 随时间变化
 const varyInDates = () => {
+    pauseTheProgress.value = !pauseTheProgress.value
     http({
         url: '/data/getDataInProvincesVaryInDates',
         data: {
@@ -39,11 +42,10 @@ const varyInDates = () => {
         },
         method: 'post',
     }).then(dataInProvincesVaryInDates => {
-        console.log(dataInProvincesVaryInDates)
-
+        buttonIcon.value = 'el-icon-VideoPause'
         let index = 0;
         const intervalId = setInterval(() => {
-            if (index < dataInProvincesVaryInDates.length) {
+            if (index < dataInProvincesVaryInDates.length && pauseTheProgress.value) {
                 const dataInProvinces = dataInProvincesVaryInDates[index];
                 currentDatePercentage.value = (index + 1) / dataInProvincesVaryInDates.length * 100;
                 currentChosenDate.value = dayjs(dataInProvinces.date).format('YY年MM月');
@@ -51,6 +53,8 @@ const varyInDates = () => {
                 index++; // Move to the next index
             } else {
                 clearInterval(intervalId);
+                buttonIcon.value = 'el-icon-VideoPlay'
+                pauseTheProgress.value = false;
             }
         }, 1000);
     })
@@ -153,25 +157,32 @@ onMounted(() => {
       />
       <el-button
           type="primary"
-          :icon="VideoPlay"
           @click="varyInDates"
-      />
+
+      >
+        <el-icon v-if="!pauseTheProgress">
+          <VideoPlay/>
+        </el-icon>
+        <el-icon v-if="pauseTheProgress">
+          <VideoPause/>
+        </el-icon>
+      </el-button>
     </div>
 
 
     <div class="row">
-      <el-card style="width: 100%">
-        <el-progress
-            :text-inside="true"
-            style="width: 100%"
-            :stroke-width="20"
-            :percentage="currentDatePercentage"
-            status="exception"
-            color="#409EFF"
-        >
-          <span>{{ currentChosenDate }}</span>
-        </el-progress>
-      </el-card>
+
+      <el-progress
+          :text-inside="true"
+          style="width: 100%"
+          :stroke-width="20"
+          :percentage="currentDatePercentage"
+          status="exception"
+          color="#409EFF"
+      >
+        <span>{{ currentChosenDate }}</span>
+      </el-progress>
+
     </div>
 
 
