@@ -2,6 +2,8 @@ package org.csu.phdata.service
 
 import org.csu.phdata.common.CommonResponse
 import org.csu.phdata.common.Constants
+import org.csu.phdata.entity.parameters.RangeParameter
+import org.csu.phdata.entity.parameters.SpecificParameter
 import org.csu.phdata.persistence.PHDataDao
 import org.csu.phdata.persistence.phdata.CasesDataDao
 import org.csu.phdata.persistence.phdata.CasesRateDao
@@ -39,57 +41,47 @@ class DataService {
     }
 
     fun getDataCount(
-        disease: String,
-        province: String,
-        date: String,
-        dataType:String
+        specificParameter: SpecificParameter
     ): CommonResponse<*> {
 
-        val month = LocalDate.parse(date)
+        val month = LocalDate.parse(specificParameter.date)
         val nextMonth = month.plusMonths(1)
-        val dao = recognizeDao(dataType)
+        val dao = recognizeDao(specificParameter.dataType)
 
         return CommonResponse.createForSuccess(
             dao.count {
-                (it.phData.disease eq disease) and
-                (it.phData.province eq province) and
+                (it.phData.disease eq specificParameter.disease) and
+                (it.phData.province eq specificParameter.province) and
                 (it.phData.monthDate between month..nextMonth) and
-                (it.phData.dataValue neq "0")
+                (it.phData.dataValue neq "0") and
+                (it.phData.age eq specificParameter.age)
             }
         )
     }
 
     fun getDataBySpecificCondition(
-        disease: String,
-        province: String,
-        dataType: String,
-        age: String,
-        date: String
+        specificParameter: SpecificParameter
     ): CommonResponse<*> {
 
-        val month = LocalDate.parse(date)
+        val month = LocalDate.parse(specificParameter.date)
         val nextMonth = month.plusMonths(1)
-        val dao = recognizeDao(dataType)
+        val dao = recognizeDao(specificParameter.dataType)
 
         val publicHealthDataList = dao.findList {
-            (it.phData.disease eq disease) and
-            (it.phData.province eq province) and
+            (it.phData.disease eq specificParameter.disease) and
+            (it.phData.province eq specificParameter.province) and
             (it.phData.monthDate between month..nextMonth) and
             (it.phData.dataValue neq "0") and
-            (it.phData.age eq age)
+            (it.phData.age eq specificParameter.age)
         }
 
         return CommonResponse.createForSuccess(publicHealthDataList)
     }
 
     fun getDataInProvinces(
-        disease: String,
-        dataType: String,
-        age: String,
-        nextAge: String,
-        date: String,
-        nextDate: String
+        rangeParameter: RangeParameter
     ): CommonResponse<*> {
+        val (disease, dataType, age, nextAge, date, nextDate) = rangeParameter
         val month = if (date.isNotEmpty()) LocalDate.parse(date) else null
         val nextMonth = month.let {
             if (nextDate.isNotEmpty()) LocalDate.parse(nextDate) else month?.plusMonths(1)

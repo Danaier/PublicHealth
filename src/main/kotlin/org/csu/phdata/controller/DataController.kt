@@ -1,9 +1,11 @@
 package org.csu.phdata.controller
 
+import org.csu.phdata.entity.parameters.RangeParameter
+import org.csu.phdata.entity.parameters.SpecificParameter
 import org.csu.phdata.service.DataService
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.redis.connection.DataType
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -16,29 +18,17 @@ class DataController {
 
     @PostMapping("getDataCount")
     fun getDataCount(
-        disease: String,
-        province: String,
-        date: String,
-        dataType: String
-    ) = dataService.getDataCount(disease, province, date, dataType)
+        @RequestBody specificParameter: SpecificParameter
+    ) = dataService.getDataCount(specificParameter)
 
     @PostMapping("getDataBySpecificCondition")
     fun getDataBySpecificCondition(
-        disease: String,
-        province: String,
-        dataType: String,
-        age: String,
-        date: String
-    ) = dataService.getDataBySpecificCondition(disease, province, dataType, age, date)
+        @RequestBody specificParameter: SpecificParameter
+    ) = dataService.getDataBySpecificCondition(specificParameter)
 
     @PostMapping("getDataInProvinces")
     fun getDataInProvinces(
-        disease: String,
-        dataType: String,
-        age: String,
-        nextAge: String,
-        date: String,
-        nextDate: String
-    ) = dataService.getDataInProvinces(disease, dataType, age, nextAge, date, nextDate)
+        @RequestBody rangeParameter: RangeParameter
+    ) = dataService.getDataInProvinces(rangeParameter)
 
 }
