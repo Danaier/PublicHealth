@@ -1,5 +1,5 @@
 <script setup>
-import {onMounted, ref, reactive} from 'vue'
+import {onMounted, ref} from 'vue'
 import * as echarts from 'echarts';
 import axios from "axios";
 import http from '../../utils/request.js';
@@ -18,39 +18,34 @@ let getSum = (total, currentValue) => {
 
 const disease = ref('包虫病');
 const monthRange = ref([dayjs('2005-01-01'), dayjs('2008-01-01')]);
-const ageRange = ref([6, 14])
-const marks = ref({
+const ageRange = ref([0, 6])
+const ageRangeMarks = ref({
     0: '0-',
-    1: '1-',
-    2: '2-',
-    3: '3-',
-    4: '4-',
-    5: '5-',
-    6: '6-',
-    7: '7-',
-    8: '8-',
-    9: '9-',
-    10: '10-',
-    11: '15-',
-    12: '20-',
-    13: '25-',
-    14: '30-',
-    15: '35-',
-    16: '40-',
-    17: '45-',
-    18: '50-',
-    19: '55-',
-    20: '60-',
-    21: '65-',
-    22: '70-',
-    23: '75-',
-    24: '80-',
-    25: '85及以上'
+    1: '5-',
+    2: '10-',
+    3: '15-',
+    4: '20-',
+    5: '25-',
+    6: '30-',
+    7: '35-',
+    8: '40-',
+    9: '45-',
+    10: '50-',
+    11: '55-',
+    12: '60-',
+    13: '65-',
+    14: '70-',
+    15: '75-',
+    16: '80-',
+    17: '85及以上'
 })
+const formatTooltip = (val) => {
+    return ageRangeMarks.value[val];
+}
 
 const diseaseOptions = [
     {value: "出血热", label: "出血热"},
-    {value: "包虫病", label: "包虫病", color: '#ff0000'},
+    {value: "包虫病", label: "包虫病"},
     {value: "急性出血性结膜炎", label: "急性出血性结膜炎"},
     {value: "手足口病", label: "手足口病"},
     {value: "斑疹伤寒", label: "斑疹伤寒"},
@@ -87,8 +82,8 @@ let drawMap = () => {
         data: {
             disease: disease.value,
             dataType: dataType,
-            age: marks.value[ageRange.value[0]],
-            nextAge: marks.value[ageRange.value[1]],
+            age: ageRangeMarks.value[ageRange.value[0]],
+            nextAge: ageRangeMarks.value[ageRange.value[1]],
             date: dayjs(monthRange.value[0]).format('YYYY-MM-DD'),
             nextDate: dayjs(monthRange.value[1]).format('YYYY-MM-DD')
         },
@@ -121,18 +116,18 @@ let drawMap = () => {
                 max: maxNum,
                 inRange: {
                     color: [
-                        '#313695',
-                        '#4575b4',
-                        '#74add1',
-                        '#abd9e9',
-                        '#e0f3f8',
-                        '#ffffbf',
-                        '#fee090',
-                        '#fdae61',
-                        '#f46d43',
-                        '#d73027',
-                        '#a50026'
+                        "#EEEEEE",  // 浅灰色，适用于表示极低的数据或零数据
+                        "#f7e4e4",  // 较浅的红色
+                        "#f0c8c8",  // 浅红色
+                        "#e9acac",  // 中等浅红
+                        "#e29090",  // 明亮的红色
+                        "#db7474",  // 较深的红色
+                        "#d45858",  // 深红色
+                        "#cd3c3c",  // 更深的红色
+                        "#c62020",  // 强烈的红色
+                        "#bf0404"   // 鲜艳的红色，适用于表示非常高的数据
                     ]
+
                 },
                 text: ['High', 'Low'],
                 calculable: true
@@ -219,9 +214,10 @@ onMounted(() => {
   <el-slider
       v-model="ageRange"
       range
-      :marks="marks"
+      :marks="ageRangeMarks"
+      :format-tooltip="formatTooltip"
       :min=0
-      :max=25
+      :max=16
       :step=1
       @change="drawMap"
   />
