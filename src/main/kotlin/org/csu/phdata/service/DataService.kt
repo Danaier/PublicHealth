@@ -2,6 +2,7 @@ package org.csu.phdata.service
 
 import org.csu.phdata.common.CommonResponse
 import org.csu.phdata.common.Constants
+import org.csu.phdata.entity.PublicHealthData
 import org.csu.phdata.entity.parameters.RangeParameter
 import org.csu.phdata.entity.parameters.SpecificParameter
 import org.csu.phdata.persistence.PHDataDao
@@ -38,6 +39,25 @@ class DataService {
         Constants.CASESRATE -> casesRateDao
         Constants.DEATHRATE -> deathRateDao
         else -> phDataDao
+    }
+
+    fun getRangeDataListFromDao(rangeParameter: RangeParameter): List<PublicHealthData> {
+        val (disease, dataType, age, nextAge, date, nextDate) = rangeParameter
+        val month = if (date.isNotEmpty()) LocalDate.parse(date) else null
+        val nextMonth = month.let {
+            if (nextDate.isNotEmpty()) LocalDate.parse(nextDate) else month?.plusMonths(1)
+        }
+        val ageInterval = getAgeInterval(age, nextAge)
+        val dao = recognizeDao(dataType)
+
+         return dao.findList { publicHealthData ->
+            val conditions = ArrayList<ColumnDeclaring<Boolean>>()
+            conditions += publicHealthData.phData.dataValue neq "0"
+            if (disease.isNotEmpty()) conditions += publicHealthData.phData.disease eq disease
+            if (month != null && nextMonth != null) conditions += publicHealthData.phData.monthDate between month..nextMonth
+            if (ageInterval.isNotEmpty()) conditions += publicHealthData.phData.age inList ageInterval
+            conditions.reduce { a, b -> a and b }
+        }
     }
 
     fun getDataCount(
@@ -81,23 +101,8 @@ class DataService {
     fun getDataInProvinces(
         rangeParameter: RangeParameter
     ): CommonResponse<*> {
-        val (disease, dataType, age, nextAge, date, nextDate) = rangeParameter
-        val month = if (date.isNotEmpty()) LocalDate.parse(date) else null
-        val nextMonth = month.let {
-            if (nextDate.isNotEmpty()) LocalDate.parse(nextDate) else month?.plusMonths(1)
-        }
-        val ageInterval = getAgeInterval(age, nextAge)
-        val dao = recognizeDao(dataType)
 
-        val publicHealthDataList = dao.findList { publicHealthData ->
-            val conditions = ArrayList<ColumnDeclaring<Boolean>>()
-            conditions += publicHealthData.phData.dataValue neq "0"
-            if (disease.isNotEmpty()) conditions += publicHealthData.phData.disease eq disease
-            if (month != null && nextMonth != null) conditions += publicHealthData.phData.monthDate between month..nextMonth
-            if (ageInterval.isNotEmpty()) conditions += publicHealthData.phData.age inList ageInterval
-            conditions.reduce { a, b -> a and b }
-        }
-
+        val publicHealthDataList = getRangeDataListFromDao(rangeParameter)
         val provinceValueMap = mutableMapOf<String, Int>()
         for (publicHealthData in publicHealthDataList) {
             val province = DataFieldUtil.convertProvinces(publicHealthData.province)
@@ -112,4 +117,5 @@ class DataService {
 
         return CommonResponse.createForSuccess(resultList)
     }
+
 }
