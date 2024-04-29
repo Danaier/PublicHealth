@@ -4,7 +4,7 @@ import * as echarts from 'echarts';
 import axios from "axios";
 import http from '../../utils/request.js';
 import {dayjs} from "element-plus";
-import {diseaseOptions, fixedOption, ageRangeMarks, formatTooltip} from './fixed.js'
+import {diseaseOptions, fixedMapOption, ageRangeMarks, formatTooltip, fixedBarOption} from './fixed.js'
 import {findMax, findMin, getSum} from "../../utils/calculation.js";
 import _ from 'lodash';
 import {VideoPause, VideoPlay} from "@element-plus/icons-vue";
@@ -20,12 +20,23 @@ const dataType = ref('cases_data')
 const currentChosenDate = ref('05年01月')
 const currentDatePercentage = ref(0)
 const pauseTheProgress = ref(false)
-const buttonIcon = ref('el-icon-plus')
+
+// 地图类型
+const chartTypeIsMap = ref(true)
 
 let option
 let hitmap
 let hitmapChart
+let mapOption
+let barOption
 
+
+// 切换图表类型
+const switchChartType = () => {
+    chartTypeIsMap.value = !chartTypeIsMap.value;
+    option = chartTypeIsMap.value ? mapOption : barOption;
+    hitmapChart.setOption(option, true);
+}
 
 // 随时间变化
 const varyInDates = () => {
@@ -42,7 +53,6 @@ const varyInDates = () => {
         },
         method: 'post',
     }).then(dataInProvincesVaryInDates => {
-        buttonIcon.value = 'el-icon-VideoPause'
         let index = 0;
         const intervalId = setInterval(() => {
             if (index < dataInProvincesVaryInDates.length && pauseTheProgress.value) {
@@ -53,7 +63,6 @@ const varyInDates = () => {
                 index++; // Move to the next index
             } else {
                 clearInterval(intervalId);
-                buttonIcon.value = 'el-icon-VideoPlay'
                 pauseTheProgress.value = false;
             }
         }, 1000);
@@ -85,7 +94,10 @@ const drawMap = dataInProvinces => {
     let maxNum = dataInProvinces.reduce(findMax, dataInProvinces[0]).value + averageNum
     let minNum = dataInProvinces.reduce(findMin, dataInProvinces[0]).value - averageNum
     minNum = minNum < 0 ? 0 : minNum
-    option = {
+    dataInProvinces.sort(function (a, b) {
+        return a.value - b.value;
+    });
+    mapOption = {
         title: {
             text: disease.value,
         },
@@ -100,16 +112,29 @@ const drawMap = dataInProvinces => {
             }
         ]
     };
-    option = _.merge(option, fixedOption)
-    axios.get('/china.json').then(updateMapData);
+    barOption = {
+        yAxis: {
+            data: dataInProvinces.map(item => item.name)
+        },
+        series: {
+            data: dataInProvinces.map(item => item.value)
+        }
+
+    }
+    mapOption = _.merge(mapOption, fixedMapOption)
+    barOption = _.merge(barOption, fixedBarOption)
+    console.log(mapOption)
+    console.log(barOption)
+    axios.get('/china.json').then(updateChartData);
 }
 
 
 // 更新数据
-const updateMapData = response => {
+const updateChartData = response => {
     const mapJson = response.data;
     hitmapChart.hideLoading();
     echarts.registerMap('China', mapJson);
+    option = chartTypeIsMap.value ? mapOption : barOption;
     hitmapChart.setOption(option);
 }
 
@@ -166,6 +191,14 @@ onMounted(() => {
         <el-icon v-if="pauseTheProgress">
           <VideoPause/>
         </el-icon>
+      </el-button>
+
+      <el-button
+          type="primary"
+          @click="switchChartType"
+      >
+        <span v-if="chartTypeIsMap">切换至坐标图</span>
+        <span v-if="!chartTypeIsMap">切换至地图</span>
       </el-button>
     </div>
 

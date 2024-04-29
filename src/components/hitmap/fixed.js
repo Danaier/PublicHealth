@@ -1,6 +1,6 @@
 import {ref} from "vue";
 
-export const fixedOption = {
+export const fixedMapOption = {
     title: {
         subtext: '来源：公共卫生科学数据中心',
         sublink: 'https://www.phsciencedata.cn/',
@@ -46,6 +46,7 @@ export const fixedOption = {
     },
     series: [
         {
+            id: '病种',
             type: 'map',
             roam: true,
             map: 'China',
@@ -54,9 +55,36 @@ export const fixedOption = {
                     show: true
                 }
             },
+            universalTransition: true,
+            animationDurationUpdate: 1000,
         }
     ]
 };
+
+export const fixedBarOption = {
+    xAxis: {
+        type: 'value'
+    },
+    yAxis: {
+        type: 'category',
+        axisLabel: {
+            rotate: 30
+        }
+    },
+    // 鼠标悬浮提示
+    tooltip: {
+        trigger: 'item',  // 数据项图形触发
+        showDelay: 0,  // 显示延迟，添加显示延迟可以避免频繁切换
+        transitionDuration: 0.2  // 提示框浮层的移动动画过渡时间，单位是 s，设置为 0 的时候会紧跟着鼠标移动
+    },
+    color: ['#cd3c3c'],
+    animationDurationUpdate: 1000,
+    series: {
+        type: 'bar',
+        id: '病种',
+        universalTransition: true
+    }
+}
 
 export const diseaseOptions = [
     {value: "出血热", label: "出血热"},
@@ -67,7 +95,6 @@ export const diseaseOptions = [
     {value: "新生儿破伤风", label: "新生儿破伤风"},
     {value: "流行性感冒", label: "流行性感冒"},
     {value: "流行性腮腺炎", label: "流行性腮腺炎"},
-    {value: "甲型H1N1流感", label: "甲型H1N1流感"},
     {value: "登革热", label: "登革热"},
     {value: "白喉", label: "白喉"},
     {value: "百日咳", label: "百日咳"},
