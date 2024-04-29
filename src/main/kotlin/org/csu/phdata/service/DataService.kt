@@ -33,6 +33,13 @@ class DataService {
     @Autowired
     lateinit var deathRateDao: DeathRateDao
 
+    data class DataOfAProvince (
+        // 省份
+        val name:String,
+        // 数据
+        val value: Int
+    )
+
     fun recognizeDao(dataType: String) = when (dataType) {
         Constants.CASESDATA -> casesDataDao
         Constants.DEATHDATA -> deathDataDao
@@ -107,15 +114,41 @@ class DataService {
         for (publicHealthData in publicHealthDataList) {
             val province = DataFieldUtil.convertProvinces(publicHealthData.province)
             val dataValue = publicHealthData.dataValue.toInt()
+            // 在Map的对应键中加入dataValue的值
             provinceValueMap[province] = (provinceValueMap[province]?.plus(dataValue))?:(dataValue)
         }
-        data class ResultData (val name:String, val value: Int)
-        val resultList = mutableListOf<ResultData>()
+        val resultList = mutableListOf<DataOfAProvince>()
         for (key in provinceValueMap.keys) {
-            provinceValueMap[key]?.let { ResultData(key, it) }?.let { resultList.add(it) }
+            // provinceValueMap[key]存在时创建ResultData对象，若创建成功则在resultList中加入它
+            provinceValueMap[key]?.let { DataOfAProvince(key, it) }?.let { resultList.add(it) }
         }
 
         return CommonResponse.createForSuccess(resultList)
+    }
+
+    fun getDataInProvincesVaryInDates(rangeParameter: RangeParameter): CommonResponse<*> {
+        val publicHealthDataList = getRangeDataListFromDao(rangeParameter)
+
+        data class ResultData(val date: LocalDate, val data: List<DataOfAProvince>)
+        val datedPHDataLists = publicHealthDataList.groupBy { it.monthDate }
+        val dataInProvincesVaryInDates = mutableListOf<ResultData>()
+        for ((monthDate, datedPHDataList) in datedPHDataLists) {
+            val provinceValueMap = mutableMapOf<String, Int>()
+            for (publicHealthData in datedPHDataList) {
+                val province = DataFieldUtil.convertProvinces(publicHealthData.province)
+                val dataValue = publicHealthData.dataValue.toInt()
+                // 在Map的对应键中加入dataValue的值
+                provinceValueMap[province] = (provinceValueMap[province]?.plus(dataValue))?:(dataValue)
+            }
+            val dataInProvincesOfADate = mutableListOf<DataOfAProvince>()
+            for (key in provinceValueMap.keys) {
+                // provinceValueMap[key]存在时创建ResultData对象，若创建成功则在resultList中加入它
+                provinceValueMap[key]?.let { DataOfAProvince(key, it) }?.let { dataInProvincesOfADate.add(it) }
+            }
+            dataInProvincesVaryInDates.add(ResultData(monthDate, dataInProvincesOfADate))
+        }
+
+        return CommonResponse.createForSuccess(dataInProvincesVaryInDates)
     }
 
 }

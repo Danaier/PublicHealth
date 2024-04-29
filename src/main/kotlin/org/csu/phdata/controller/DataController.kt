@@ -31,4 +31,9 @@ class DataController {
         @RequestBody rangeParameter: RangeParameter
     ) = dataService.getDataInProvinces(rangeParameter)
 
+    @PostMapping("getDataInProvincesVaryInDates")
+    fun getDataInProvinceVaryInDates(
+        @RequestBody rangeParameter: RangeParameter
+    ) = dataService.getDataInProvincesVaryInDates(rangeParameter)
+
 }
