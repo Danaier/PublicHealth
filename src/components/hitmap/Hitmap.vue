@@ -7,6 +7,8 @@ import {dayjs} from "element-plus";
 import {diseaseOptions, fixedOption, ageRangeMarks, formatTooltip} from './fixed.js'
 import {findMax, findMin, getSum} from "../../utils/calculation.js";
 import _ from 'lodash';
+import {VideoPlay} from '@element-plus/icons-vue'
+
 
 // 设立一些初始值
 const disease = ref('包虫病');  // 病种只会被手动改变
@@ -14,10 +16,45 @@ const monthRange = ref([dayjs('2005-01-01'), dayjs('2008-01-01')]);
 const ageRange = ref([0, 6])
 const dataType = ref('cases_data')
 
+// 日期变化进度条
+const currentChosenDate = ref('05年01月')
+const currentDatePercentage = ref(0)
+
 let option
 let hitmap
 let hitmapChart
 
+
+// 随时间变化
+const varyInDates = () => {
+    http({
+        url: '/data/getDataInProvincesVaryInDates',
+        data: {
+            disease: disease.value,
+            dataType: dataType.value,
+            age: ageRangeMarks.value[ageRange.value[0]],
+            nextAge: ageRangeMarks.value[ageRange.value[1]],
+            date: dayjs(monthRange.value[0]).format('YYYY-MM-DD'),
+            nextDate: dayjs(monthRange.value[1]).format('YYYY-MM-DD')
+        },
+        method: 'post',
+    }).then(dataInProvincesVaryInDates => {
+        console.log(dataInProvincesVaryInDates)
+
+        let index = 0;
+        const intervalId = setInterval(() => {
+            if (index < dataInProvincesVaryInDates.length) {
+                const dataInProvinces = dataInProvincesVaryInDates[index];
+                currentDatePercentage.value = (index + 1) / dataInProvincesVaryInDates.length * 100;
+                currentChosenDate.value = dayjs(dataInProvinces.date).format('YY年MM月');
+                drawMap(dataInProvinces.data);
+                index++; // Move to the next index
+            } else {
+                clearInterval(intervalId);
+            }
+        }, 1000);
+    })
+}
 
 // 刷新地图
 const refresh = () => {
@@ -87,44 +124,93 @@ onMounted(() => {
 </script>
 
 <template>
-  <!-- 病种选择 -->
-  <el-select
-      v-model="disease"
-      placeholder="Select"
-      style="width: 240px"
-      @change="refresh"
-  >
-    <el-option
-        v-for="item in diseaseOptions"
-        :label="item.label"
-        :value="item.value"
+
+  <div class="page-content">
+    <!-- 第一行 -->
+    <div class="row">
+      <!-- 病种选择 -->
+      <el-select
+          v-model="disease"
+          placeholder="Select"
+          style="width: 240px"
+          @change="refresh"
+      >
+        <el-option
+            v-for="item in diseaseOptions"
+            :label="item.label"
+            :value="item.value"
+        />
+      </el-select>
+      <!-- 时间范围选择 -->
+      <el-date-picker
+          v-model="monthRange"
+          type="monthrange"
+          unlink-panels
+          range-separator="到"
+          start-placeholder="起始日期"
+          end-placeholder="结束日期"
+          @change="refresh"
+      />
+      <el-button
+          type="primary"
+          :icon="VideoPlay"
+          @click="varyInDates"
+      />
+    </div>
+
+
+    <div class="row">
+      <el-card style="width: 100%">
+        <el-progress
+            :text-inside="true"
+            style="width: 100%"
+            :stroke-width="20"
+            :percentage="currentDatePercentage"
+            status="exception"
+            color="#409EFF"
+        >
+          <span>{{ currentChosenDate }}</span>
+        </el-progress>
+      </el-card>
+    </div>
+
+
+    <!-- 数据地图显示 -->
+    <div class="row">
+      <el-card style="width: 100%;">
+        <div id="hitmap" style="width: 800px;height:600px;"></div>
+      </el-card>
+    </div>
+
+
+    <!-- 年龄范围选择 -->
+    <el-slider
+        style="height: 30px"
+        v-model="ageRange"
+        range
+        :marks="ageRangeMarks"
+        :format-tooltip="formatTooltip"
+        :min=0
+        :max=16
+        :step=1
+        @change="refresh"
     />
-  </el-select>
-  <!-- 时间范围选择 -->
-  <el-date-picker
-      v-model="monthRange"
-      type="monthrange"
-      unlink-panels
-      range-separator="到"
-      start-placeholder="起始日期"
-      end-placeholder="结束日期"
-      @change="refresh"
-  />
-  <!-- 数据地图显示 -->
-  <div id="hitmap" style="width: 800px;height:600px;"></div>
-  <!-- 年龄范围选择 -->
-  <el-slider
-      v-model="ageRange"
-      range
-      :marks="ageRangeMarks"
-      :format-tooltip="formatTooltip"
-      :min=0
-      :max=16
-      :step=1
-      @change="refresh"
-  />
+
+
+  </div>
+
 </template>
 
 <style scoped>
+.page-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
 
+.row {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
 </style>
