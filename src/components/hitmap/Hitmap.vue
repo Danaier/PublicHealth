@@ -72,6 +72,9 @@ const varyInDates = () => {
 // 刷新地图
 const refresh = () => {
     hitmapChart.showLoading();
+    currentDatePercentage.value = 0;
+    currentChosenDate.value = dayjs(monthRange.value[0]).format('YY年MM月');
+    pauseTheProgress.value = false;
     http({
         url: '/data/getDataInProvinces',
         data: {
@@ -123,8 +126,6 @@ const drawMap = dataInProvinces => {
     }
     mapOption = _.merge(mapOption, fixedMapOption)
     barOption = _.merge(barOption, fixedBarOption)
-    console.log(mapOption)
-    console.log(barOption)
     axios.get('/china.json').then(updateChartData);
 }
 
