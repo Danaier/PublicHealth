@@ -231,9 +231,9 @@ onMounted(() => {
         <!-- 数据地图显示 -->
         <div class="row">
 
-          <div style="width: 100%;">
+          <el-card shadow="hover" style="width: 100%;">
             <div id="hitmap" style="width: 800px;height:600px;"></div>
-          </div>
+          </el-card>
 
         </div>
 
@@ -256,53 +256,52 @@ onMounted(() => {
 
     <div class="introduction-content">
       <el-card style="width: 350px;height: 100%">
-        <el-collapse v-model="activeName" >
-          <el-collapse-item name="1">
-
-            <template #title>
-              <h3>疾病介绍</h3>
-            </template>
-
-            <div>
-              {{ diseaseIntroduction.find(item => item.name === disease).briefIntroduction }}
-            </div>
-
-          </el-collapse-item>
-          <el-collapse-item name="2">
-
-            <template #title>
-              <h3>病因</h3>
-            </template>
-
-            <div>
-              {{ diseaseIntroduction.find(item => item.name === disease).etiology }}
-            </div>
-
-          </el-collapse-item>
-          <el-collapse-item name="3">
-
-            <template #title>
-              <h3>临床表现</h3>
-            </template>
+        <el-collapse accordion v-model="activeName" style="border: none">
+          <el-card class="introduction-content-item" shadow="hover">
+            <el-collapse-item name="1">
+              <template #title>
+                <h3>{{ disease }}</h3>
+              </template>
+              <el-scrollbar max-height="380px">
+                {{ diseaseIntroduction.find(item => item.name === disease).briefIntroduction }}
+              </el-scrollbar>
+            </el-collapse-item>
+          </el-card>
 
 
-            <div>
-              {{ diseaseIntroduction.find(item => item.name === disease).clinicalPicture }}
-            </div>
+          <el-card class="introduction-content-item" shadow="hover">
+            <el-collapse-item name="2">
+              <template #title>
+                <h3>病因</h3>
+              </template>
+              <el-scrollbar max-height="380px">
+                {{ diseaseIntroduction.find(item => item.name === disease).etiology }}
+              </el-scrollbar>
+            </el-collapse-item>
+          </el-card>
 
-          </el-collapse-item>
-          <el-collapse-item name="4">
+          <el-card class="introduction-content-item" shadow="hover">
+            <el-collapse-item name="3">
+              <template #title>
+                <h3>临床表现</h3>
+              </template>
+              <el-scrollbar max-height="380px">
+                {{ diseaseIntroduction.find(item => item.name === disease).clinicalPicture }}
+              </el-scrollbar>
+            </el-collapse-item>
+          </el-card>
 
-            <template #title>
-              <h3>治疗方法</h3>
-            </template>
+          <el-card class="introduction-content-item" shadow="hover">
+            <el-collapse-item name="4">
+              <template #title>
+                <h3>治疗方法</h3>
+              </template>
+              <el-scrollbar max-height="380px">
+                {{ diseaseIntroduction.find(item => item.name === disease).treatment }}
+              </el-scrollbar>
+            </el-collapse-item>
+          </el-card>
 
-
-            <div>
-              {{ diseaseIntroduction.find(item => item.name === disease).treatment }}
-            </div>
-
-          </el-collapse-item>
         </el-collapse>
       </el-card>
 
@@ -323,6 +322,7 @@ onMounted(() => {
 .page-container {
     display: flex;
     flex-direction: row;
+    justify-content: center;
     gap: 10px;
 }
 
@@ -331,5 +331,10 @@ onMounted(() => {
     justify-content: space-between;
     gap: 10px;
 }
+
+.introduction-content-item {
+  border: none;
+}
+
 
 </style>
