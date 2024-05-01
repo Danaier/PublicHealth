@@ -118,6 +118,7 @@ const drawMap = dataInProvinces => {
             }
         ]
     };
+    dataInProvinces = dataInProvinces.slice(0, 20)
     barOption = {
         yAxis: {
             data: dataInProvinces.map(item => item.name)
@@ -158,155 +159,162 @@ onMounted(() => {
 
 <template>
 
-  <div class="page-container">
+  <el-container>
 
-    <el-card>
-      <div class="chart-content">
-        <!-- 第一行 -->
-        <div class="row">
+    <el-main>
 
-          <!-- 病种选择 -->
-          <el-select
-              v-model="disease"
-              placeholder="Select"
-              style="width: 240px"
-              @change="refresh"
-          >
-            <el-option
-                v-for="item in diseaseOptions"
-                :label="item.label"
-                :value="item.value"
+      <div class="page-container">
+
+        <el-card>
+          <div class="chart-content">
+            <!-- 第一行 -->
+            <div class="row">
+
+              <!-- 病种选择 -->
+              <el-select
+                  v-model="disease"
+                  placeholder="Select"
+                  style="width: 240px"
+                  @change="refresh"
+              >
+                <el-option
+                    v-for="item in diseaseOptions"
+                    :label="item.label"
+                    :value="item.value"
+                />
+              </el-select>
+
+              <!-- 时间范围选择 -->
+              <el-date-picker
+                  v-model="monthRange"
+                  type="monthrange"
+                  unlink-panels
+                  range-separator="到"
+                  start-placeholder="起始日期"
+                  end-placeholder="结束日期"
+                  @change="refresh"
+              />
+
+              <el-button
+                  type="primary"
+                  @click="varyInDates"
+              >
+                <el-icon v-if="!pauseTheProgress">
+                  <VideoPlay/>
+                </el-icon>
+                <el-icon v-if="pauseTheProgress">
+                  <VideoPause/>
+                </el-icon>
+              </el-button>
+
+              <el-button
+                  type="primary"
+                  @click="switchChartType"
+              >
+                <span v-if="chartTypeIsMap">切换至条形图</span>
+                <span v-if="!chartTypeIsMap">切换至分布图</span>
+              </el-button>
+
+            </div>
+
+
+            <div class="row">
+
+              <el-progress
+                  :text-inside="true"
+                  style="width: 100%"
+                  :stroke-width="20"
+                  :percentage="currentDatePercentage"
+                  status="exception"
+                  color="#409EFF"
+              >
+                <span>{{ currentChosenDate }}</span>
+              </el-progress>
+
+            </div>
+
+            <!-- 数据地图显示 -->
+            <div class="row">
+
+              <el-card shadow="hover" style="width: 100%;">
+                <div id="hitmap" style="width: 800px;height:600px;"></div>
+              </el-card>
+
+            </div>
+
+            <!-- 年龄范围选择 -->
+            <el-slider
+                style="height: 30px"
+                v-model="ageRange"
+                range
+                :marks="ageRangeMarks"
+                :format-tooltip="formatTooltip"
+                :min=0
+                :max=16
+                :step=1
+                @change="refresh"
             />
-          </el-select>
 
-          <!-- 时间范围选择 -->
-          <el-date-picker
-              v-model="monthRange"
-              type="monthrange"
-              unlink-panels
-              range-separator="到"
-              start-placeholder="起始日期"
-              end-placeholder="结束日期"
-              @change="refresh"
-          />
-
-          <el-button
-              type="primary"
-              @click="varyInDates"
-          >
-            <el-icon v-if="!pauseTheProgress">
-              <VideoPlay/>
-            </el-icon>
-            <el-icon v-if="pauseTheProgress">
-              <VideoPause/>
-            </el-icon>
-          </el-button>
-
-          <el-button
-              type="primary"
-              @click="switchChartType"
-          >
-            <span v-if="chartTypeIsMap">切换至条形图</span>
-            <span v-if="!chartTypeIsMap">切换至分布图</span>
-          </el-button>
-
-        </div>
+          </div>
+        </el-card>
 
 
-        <div class="row">
+        <div class="introduction-content">
+          <el-card style="width: 350px;height: 100%">
+            <el-collapse accordion v-model="activeName" style="border: none">
+              <el-card class="introduction-content-item" shadow="hover">
+                <el-collapse-item name="1">
+                  <template #title>
+                    <h3>{{ disease }}</h3>
+                  </template>
+                  <el-scrollbar max-height="380px">
+                    {{ diseaseIntroduction.find(item => item.name === disease).briefIntroduction }}
+                  </el-scrollbar>
+                </el-collapse-item>
+              </el-card>
 
-          <el-progress
-              :text-inside="true"
-              style="width: 100%"
-              :stroke-width="20"
-              :percentage="currentDatePercentage"
-              status="exception"
-              color="#409EFF"
-          >
-            <span>{{ currentChosenDate }}</span>
-          </el-progress>
 
-        </div>
+              <el-card class="introduction-content-item" shadow="hover">
+                <el-collapse-item name="2">
+                  <template #title>
+                    <h3>病因</h3>
+                  </template>
+                  <el-scrollbar max-height="380px">
+                    {{ diseaseIntroduction.find(item => item.name === disease).etiology }}
+                  </el-scrollbar>
+                </el-collapse-item>
+              </el-card>
 
-        <!-- 数据地图显示 -->
-        <div class="row">
+              <el-card class="introduction-content-item" shadow="hover">
+                <el-collapse-item name="3">
+                  <template #title>
+                    <h3>临床表现</h3>
+                  </template>
+                  <el-scrollbar max-height="380px">
+                    {{ diseaseIntroduction.find(item => item.name === disease).clinicalPicture }}
+                  </el-scrollbar>
+                </el-collapse-item>
+              </el-card>
 
-          <el-card shadow="hover" style="width: 100%;">
-            <div id="hitmap" style="width: 800px;height:600px;"></div>
+              <el-card class="introduction-content-item" shadow="hover">
+                <el-collapse-item name="4">
+                  <template #title>
+                    <h3>治疗方法</h3>
+                  </template>
+                  <el-scrollbar max-height="380px">
+                    {{ diseaseIntroduction.find(item => item.name === disease).treatment }}
+                  </el-scrollbar>
+                </el-collapse-item>
+              </el-card>
+
+            </el-collapse>
           </el-card>
 
         </div>
-
-        <!-- 年龄范围选择 -->
-        <el-slider
-            style="height: 30px"
-            v-model="ageRange"
-            range
-            :marks="ageRangeMarks"
-            :format-tooltip="formatTooltip"
-            :min=0
-            :max=16
-            :step=1
-            @change="refresh"
-        />
-
       </div>
-    </el-card>
+    </el-main>
 
-
-    <div class="introduction-content">
-      <el-card style="width: 350px;height: 100%">
-        <el-collapse accordion v-model="activeName" style="border: none">
-          <el-card class="introduction-content-item" shadow="hover">
-            <el-collapse-item name="1">
-              <template #title>
-                <h3>{{ disease }}</h3>
-              </template>
-              <el-scrollbar max-height="380px">
-                {{ diseaseIntroduction.find(item => item.name === disease).briefIntroduction }}
-              </el-scrollbar>
-            </el-collapse-item>
-          </el-card>
-
-
-          <el-card class="introduction-content-item" shadow="hover">
-            <el-collapse-item name="2">
-              <template #title>
-                <h3>病因</h3>
-              </template>
-              <el-scrollbar max-height="380px">
-                {{ diseaseIntroduction.find(item => item.name === disease).etiology }}
-              </el-scrollbar>
-            </el-collapse-item>
-          </el-card>
-
-          <el-card class="introduction-content-item" shadow="hover">
-            <el-collapse-item name="3">
-              <template #title>
-                <h3>临床表现</h3>
-              </template>
-              <el-scrollbar max-height="380px">
-                {{ diseaseIntroduction.find(item => item.name === disease).clinicalPicture }}
-              </el-scrollbar>
-            </el-collapse-item>
-          </el-card>
-
-          <el-card class="introduction-content-item" shadow="hover">
-            <el-collapse-item name="4">
-              <template #title>
-                <h3>治疗方法</h3>
-              </template>
-              <el-scrollbar max-height="380px">
-                {{ diseaseIntroduction.find(item => item.name === disease).treatment }}
-              </el-scrollbar>
-            </el-collapse-item>
-          </el-card>
-
-        </el-collapse>
-      </el-card>
-
-    </div>
-  </div>
+  </el-container>
 
 
 </template>
@@ -333,7 +341,7 @@ onMounted(() => {
 }
 
 .introduction-content-item {
-  border: none;
+    border: none;
 }
 
 
