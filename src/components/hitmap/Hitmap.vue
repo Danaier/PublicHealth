@@ -8,6 +8,7 @@ import {diseaseOptions, fixedMapOption, ageRangeMarks, formatTooltip, fixedBarOp
 import {findMax, findMin, getSum} from "../../utils/calculation.js";
 import _ from 'lodash';
 import {VideoPause, VideoPlay} from "@element-plus/icons-vue";
+import {diseaseIntroduction} from "./diseaseIntroduction.js";
 
 
 // 设立一些初始值
@@ -23,6 +24,8 @@ const pauseTheProgress = ref(false)
 
 // 地图类型
 const chartTypeIsMap = ref(true)
+
+const activeName = ref('1')
 
 let option
 let hitmap
@@ -155,101 +158,171 @@ onMounted(() => {
 
 <template>
 
-  <div class="page-content">
-    <!-- 第一行 -->
-    <div class="row">
-      <!-- 病种选择 -->
-      <el-select
-          v-model="disease"
-          placeholder="Select"
-          style="width: 240px"
-          @change="refresh"
-      >
-        <el-option
-            v-for="item in diseaseOptions"
-            :label="item.label"
-            :value="item.value"
+  <div class="page-container">
+
+    <el-card>
+      <div class="chart-content">
+        <!-- 第一行 -->
+        <div class="row">
+
+          <!-- 病种选择 -->
+          <el-select
+              v-model="disease"
+              placeholder="Select"
+              style="width: 240px"
+              @change="refresh"
+          >
+            <el-option
+                v-for="item in diseaseOptions"
+                :label="item.label"
+                :value="item.value"
+            />
+          </el-select>
+
+          <!-- 时间范围选择 -->
+          <el-date-picker
+              v-model="monthRange"
+              type="monthrange"
+              unlink-panels
+              range-separator="到"
+              start-placeholder="起始日期"
+              end-placeholder="结束日期"
+              @change="refresh"
+          />
+
+          <el-button
+              type="primary"
+              @click="varyInDates"
+          >
+            <el-icon v-if="!pauseTheProgress">
+              <VideoPlay/>
+            </el-icon>
+            <el-icon v-if="pauseTheProgress">
+              <VideoPause/>
+            </el-icon>
+          </el-button>
+
+          <el-button
+              type="primary"
+              @click="switchChartType"
+          >
+            <span v-if="chartTypeIsMap">切换至条形图</span>
+            <span v-if="!chartTypeIsMap">切换至分布图</span>
+          </el-button>
+
+        </div>
+
+
+        <div class="row">
+
+          <el-progress
+              :text-inside="true"
+              style="width: 100%"
+              :stroke-width="20"
+              :percentage="currentDatePercentage"
+              status="exception"
+              color="#409EFF"
+          >
+            <span>{{ currentChosenDate }}</span>
+          </el-progress>
+
+        </div>
+
+        <!-- 数据地图显示 -->
+        <div class="row">
+
+          <div style="width: 100%;">
+            <div id="hitmap" style="width: 800px;height:600px;"></div>
+          </div>
+
+        </div>
+
+        <!-- 年龄范围选择 -->
+        <el-slider
+            style="height: 30px"
+            v-model="ageRange"
+            range
+            :marks="ageRangeMarks"
+            :format-tooltip="formatTooltip"
+            :min=0
+            :max=16
+            :step=1
+            @change="refresh"
         />
-      </el-select>
-      <!-- 时间范围选择 -->
-      <el-date-picker
-          v-model="monthRange"
-          type="monthrange"
-          unlink-panels
-          range-separator="到"
-          start-placeholder="起始日期"
-          end-placeholder="结束日期"
-          @change="refresh"
-      />
-      <el-button
-          type="primary"
-          @click="varyInDates"
 
-      >
-        <el-icon v-if="!pauseTheProgress">
-          <VideoPlay/>
-        </el-icon>
-        <el-icon v-if="pauseTheProgress">
-          <VideoPause/>
-        </el-icon>
-      </el-button>
-
-      <el-button
-          type="primary"
-          @click="switchChartType"
-      >
-        <span v-if="chartTypeIsMap">切换至坐标图</span>
-        <span v-if="!chartTypeIsMap">切换至地图</span>
-      </el-button>
-    </div>
+      </div>
+    </el-card>
 
 
-    <div class="row">
+    <div class="introduction-content">
+      <el-card style="width: 350px;height: 100%">
+        <el-collapse v-model="activeName" >
+          <el-collapse-item name="1">
 
-      <el-progress
-          :text-inside="true"
-          style="width: 100%"
-          :stroke-width="20"
-          :percentage="currentDatePercentage"
-          status="exception"
-          color="#409EFF"
-      >
-        <span>{{ currentChosenDate }}</span>
-      </el-progress>
+            <template #title>
+              <h3>疾病介绍</h3>
+            </template>
 
-    </div>
+            <div>
+              {{ diseaseIntroduction.find(item => item.name === disease).briefIntroduction }}
+            </div>
+
+          </el-collapse-item>
+          <el-collapse-item name="2">
+
+            <template #title>
+              <h3>病因</h3>
+            </template>
+
+            <div>
+              {{ diseaseIntroduction.find(item => item.name === disease).etiology }}
+            </div>
+
+          </el-collapse-item>
+          <el-collapse-item name="3">
+
+            <template #title>
+              <h3>临床表现</h3>
+            </template>
 
 
-    <!-- 数据地图显示 -->
-    <div class="row">
-      <el-card style="width: 100%;">
-        <div id="hitmap" style="width: 800px;height:600px;"></div>
+            <div>
+              {{ diseaseIntroduction.find(item => item.name === disease).clinicalPicture }}
+            </div>
+
+          </el-collapse-item>
+          <el-collapse-item name="4">
+
+            <template #title>
+              <h3>治疗方法</h3>
+            </template>
+
+
+            <div>
+              {{ diseaseIntroduction.find(item => item.name === disease).treatment }}
+            </div>
+
+          </el-collapse-item>
+        </el-collapse>
       </el-card>
+
     </div>
-
-
-    <!-- 年龄范围选择 -->
-    <el-slider
-        style="height: 30px"
-        v-model="ageRange"
-        range
-        :marks="ageRangeMarks"
-        :format-tooltip="formatTooltip"
-        :min=0
-        :max=16
-        :step=1
-        @change="refresh"
-    />
-
-
   </div>
+
 
 </template>
 
 <style scoped>
-.page-content {
+
+.chart-content {
     display: flex;
     flex-direction: column;
+    gap: 10px;
+}
+
+.page-container {
+    display: flex;
+    flex-direction: row;
     gap: 10px;
 }
 
@@ -258,4 +331,5 @@ onMounted(() => {
     justify-content: space-between;
     gap: 10px;
 }
+
 </style>

@@ -92,7 +92,6 @@ export const diseaseOptions = [
     {value: "急性出血性结膜炎", label: "急性出血性结膜炎"},
     {value: "手足口病", label: "手足口病"},
     {value: "斑疹伤寒", label: "斑疹伤寒"},
-    {value: "新生儿破伤风", label: "新生儿破伤风"},
     {value: "流行性感冒", label: "流行性感冒"},
     {value: "流行性腮腺炎", label: "流行性腮腺炎"},
     {value: "登革热", label: "登革热"},
