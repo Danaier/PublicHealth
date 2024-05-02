@@ -118,7 +118,6 @@ const drawMap = dataInProvinces => {
             }
         ]
     };
-    console.log(dataInProvinces)
     dataInProvinces = dataInProvinces.slice(-20)
     barOption = {
         yAxis: {
