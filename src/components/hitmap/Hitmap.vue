@@ -185,16 +185,26 @@ onMounted(() => {
               </el-select>
 
               <!-- 时间范围选择 -->
-              <el-date-picker
-                  v-model="monthRange"
-                  type="monthrange"
-                  unlink-panels
-                  range-separator="到"
-                  start-placeholder="起始日期"
-                  end-placeholder="结束日期"
-                  @change="refresh"
-              />
+              <el-tooltip
+                  class="box-item"
+                  effect="light"
+                  content="请先点击开始月份再点击结束月份选择时间范围"
+                  placement="bottom"
+              >
+                <div>
+                  <el-date-picker
+                      v-model="monthRange"
+                      type="monthrange"
+                      unlink-panels
+                      range-separator="到"
+                      start-placeholder="起始日期"
+                      end-placeholder="结束日期"
+                      @change="refresh"
+                  />
+                </div>
+              </el-tooltip>
 
+              <!-- 时间演变按钮 -->
               <el-button
                   type="primary"
                   @click="varyInDates"
@@ -202,11 +212,10 @@ onMounted(() => {
                 <el-icon v-if="!pauseTheProgress">
                   <el-tooltip
                       class="box-item"
-                      effect="dark"
+                      effect="light"
                       content="开始时间演变"
-                      placement="top"
+                      placement="bottom"
                   >
-
                     <VideoPlay/>
                   </el-tooltip>
                 </el-icon>
@@ -215,6 +224,7 @@ onMounted(() => {
                 </el-icon>
               </el-button>
 
+              <!-- 切换展示类型按钮 -->
               <el-button
                   type="primary"
                   @click="switchChartType"
@@ -225,10 +235,10 @@ onMounted(() => {
 
             </div>
 
-
             <!-- 数据地图显示 -->
             <el-card shadow="hover" style="width: 100%;">
               <div id="hitmap" style="width: 800px;height:600px;"></div>
+              <!-- 时间范围演变进度条 -->
               <el-progress
                   :text-inside="true"
                   style="width: 100%"
@@ -256,14 +266,14 @@ onMounted(() => {
               />
             </div>
 
-
           </div>
         </el-card>
 
-
+        <!-- 病种介绍部分 -->
         <div class="introduction-content">
           <el-card style="width: 350px;height: 100%">
             <el-collapse accordion v-model="activeName" style="border: none">
+
               <el-card class="introduction-content-item" shadow="hover">
                 <el-collapse-item name="1">
                   <template #title>
@@ -274,7 +284,6 @@ onMounted(() => {
                   </el-scrollbar>
                 </el-collapse-item>
               </el-card>
-
 
               <el-card class="introduction-content-item" shadow="hover">
                 <el-collapse-item name="2">
@@ -311,8 +320,8 @@ onMounted(() => {
 
             </el-collapse>
           </el-card>
-
         </div>
+
       </div>
     </el-main>
 
