@@ -108,6 +108,25 @@ export const diseaseOptions = [
 ];
 
 export const ageRangeMarks = ref({
+    0: '0岁',
+    1: '5岁',
+    2: '10岁',
+    3: '15岁',
+    4: '20岁',
+    5: '25岁',
+    6: '30岁',
+    7: '35岁',
+    8: '40岁',
+    9: '45岁',
+    10: '50岁',
+    11: '55岁',
+    12: '60岁',
+    13: '65岁',
+    14: '70岁',
+    15: '75岁',
+    16: '80岁'
+})
+export const ageRangeValue = ref({
     0: '0-',
     1: '5-',
     2: '10-',
@@ -124,9 +143,8 @@ export const ageRangeMarks = ref({
     13: '65-',
     14: '70-',
     15: '75-',
-    16: '80-',
-    17: '85及以上'
+    16: '80-'
 })
 export const formatTooltip = (val) => {
-    return ageRangeMarks.value[val];
+    return ageRangeMarks.value[val].replace('-', '岁')
 }

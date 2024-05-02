@@ -4,7 +4,7 @@ import * as echarts from 'echarts';
 import axios from "axios";
 import http from '../../utils/request.js';
 import {dayjs} from "element-plus";
-import {diseaseOptions, fixedMapOption, ageRangeMarks, formatTooltip, fixedBarOption} from './fixed.js'
+import {diseaseOptions, fixedMapOption, ageRangeMarks, ageRangeValue, formatTooltip, fixedBarOption} from './fixed.js'
 import {findMax, findMin, getSum} from "../../utils/calculation.js";
 import _ from 'lodash';
 import {VideoPause, VideoPlay} from "@element-plus/icons-vue";
@@ -49,8 +49,8 @@ const varyInDates = () => {
         data: {
             disease: disease.value,
             dataType: dataType.value,
-            age: ageRangeMarks.value[ageRange.value[0]],
-            nextAge: ageRangeMarks.value[ageRange.value[1]],
+            age: ageRangeValue.value[ageRange.value[0]],
+            nextAge: ageRangeValue.value[ageRange.value[1]],
             date: dayjs(monthRange.value[0]).format('YYYY-MM-DD'),
             nextDate: dayjs(monthRange.value[1]).format('YYYY-MM-DD')
         },
@@ -83,8 +83,8 @@ const refresh = () => {
         data: {
             disease: disease.value,
             dataType: dataType.value,
-            age: ageRangeMarks.value[ageRange.value[0]],
-            nextAge: ageRangeMarks.value[ageRange.value[1]],
+            age: ageRangeValue.value[ageRange.value[0]],
+            nextAge: ageRangeValue.value[ageRange.value[1]],
             date: dayjs(monthRange.value[0]).format('YYYY-MM-DD'),
             nextDate: dayjs(monthRange.value[1]).format('YYYY-MM-DD')
         },
