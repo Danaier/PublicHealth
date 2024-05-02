@@ -1,5 +1,6 @@
 package org.csu.phdata.controller
 
+import jakarta.annotation.Resource
 import org.csu.phdata.entity.parameters.RangeParameter
 import org.csu.phdata.entity.parameters.SpecificParameter
 import org.csu.phdata.service.DataService
@@ -10,9 +11,9 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
+@Cacheable(cacheNames = ["requests"], keyGenerator = "customKeyGenerator")
 @RequestMapping ("/data/")
 @RestController
-@Cacheable(cacheNames = ["requests"])
 class DataController {
 
     @Autowired
