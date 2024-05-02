@@ -3,7 +3,7 @@ package org.csu.phdata.common
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
-
+import java.io.Serializable
 
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -11,7 +11,7 @@ data class CommonResponse<T> (
     val code: Int,
     val message: String,
     val data: T
-) {
+) : Serializable {
     /**
      * 用于判断请求是否为成功请求
      */

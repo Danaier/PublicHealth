@@ -16,6 +16,7 @@ import org.ktorm.dsl.*
 import org.ktorm.schema.ColumnDeclaring
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import java.io.Serializable
 import java.time.LocalDate
 
 
@@ -38,7 +39,11 @@ class DataService {
         val name:String,
         // 数据
         val value: Int
-    )
+    ): Serializable
+    data class DataInProvincesOfADate(
+        val date: LocalDate,
+        val data: List<DataOfAProvince>
+    ): Serializable
 
     fun recognizeDao(dataType: String) = when (dataType) {
         Constants.CASESDATA -> casesDataDao
@@ -129,9 +134,8 @@ class DataService {
     fun getDataInProvincesVaryInDates(rangeParameter: RangeParameter): CommonResponse<*> {
         val publicHealthDataList = getRangeDataListFromDao(rangeParameter)
 
-        data class ResultData(val date: LocalDate, val data: List<DataOfAProvince>)
         val datedPHDataLists = publicHealthDataList.groupBy { it.monthDate }
-        val dataInProvincesVaryInDates = mutableListOf<ResultData>()
+        val dataInProvincesVaryInDates = mutableListOf<DataInProvincesOfADate>()
         for ((monthDate, datedPHDataList) in datedPHDataLists) {
             val provinceValueMap = mutableMapOf<String, Int>()
             for (publicHealthData in datedPHDataList) {
@@ -145,7 +149,7 @@ class DataService {
                 // provinceValueMap[key]存在时创建ResultData对象，若创建成功则在resultList中加入它
                 provinceValueMap[key]?.let { DataOfAProvince(key, it) }?.let { dataInProvincesOfADate.add(it) }
             }
-            dataInProvincesVaryInDates.add(ResultData(monthDate, dataInProvincesOfADate))
+            dataInProvincesVaryInDates.add(DataInProvincesOfADate(monthDate, dataInProvincesOfADate))
         }
 
         return CommonResponse.createForSuccess(dataInProvincesVaryInDates.sortedBy { it.date })

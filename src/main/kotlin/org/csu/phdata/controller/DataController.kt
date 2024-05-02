@@ -4,6 +4,7 @@ import org.csu.phdata.entity.parameters.RangeParameter
 import org.csu.phdata.entity.parameters.SpecificParameter
 import org.csu.phdata.service.DataService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RequestMapping ("/data/")
 @RestController
+@Cacheable(cacheNames = ["requests"])
 class DataController {
 
     @Autowired
