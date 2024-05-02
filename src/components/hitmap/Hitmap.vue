@@ -41,7 +41,7 @@ const switchChartType = () => {
     hitmapChart.setOption(option, true);
 }
 
-// 随时间变化
+// 时间演变
 const varyInDates = () => {
     pauseTheProgress.value = !pauseTheProgress.value
     http({
@@ -200,7 +200,15 @@ onMounted(() => {
                   @click="varyInDates"
               >
                 <el-icon v-if="!pauseTheProgress">
-                  <VideoPlay/>
+                  <el-tooltip
+                      class="box-item"
+                      effect="dark"
+                      content="开始时间演变"
+                      placement="top"
+                  >
+
+                    <VideoPlay/>
+                  </el-tooltip>
                 </el-icon>
                 <el-icon v-if="pauseTheProgress">
                   <VideoPause/>
@@ -218,8 +226,9 @@ onMounted(() => {
             </div>
 
 
-            <div class="row">
-
+            <!-- 数据地图显示 -->
+            <el-card shadow="hover" style="width: 100%;">
+              <div id="hitmap" style="width: 800px;height:600px;"></div>
               <el-progress
                   :text-inside="true"
                   style="width: 100%"
@@ -230,30 +239,23 @@ onMounted(() => {
               >
                 <span>{{ currentChosenDate }}</span>
               </el-progress>
-
-            </div>
-
-            <!-- 数据地图显示 -->
-            <div class="row">
-
-              <el-card shadow="hover" style="width: 100%;">
-                <div id="hitmap" style="width: 800px;height:600px;"></div>
-              </el-card>
-
-            </div>
+            </el-card>
 
             <!-- 年龄范围选择 -->
-            <el-slider
-                style="height: 30px"
-                v-model="ageRange"
-                range
-                :marks="ageRangeMarks"
-                :format-tooltip="formatTooltip"
-                :min=0
-                :max=16
-                :step=1
-                @change="refresh"
-            />
+            <div class="row">
+              <el-slider
+                  style="height: 30px"
+                  v-model="ageRange"
+                  range
+                  :marks="ageRangeMarks"
+                  :format-tooltip="formatTooltip"
+                  :min=0
+                  :max=16
+                  :step=1
+                  @change="refresh"
+              />
+            </div>
+
 
           </div>
         </el-card>
@@ -343,6 +345,5 @@ onMounted(() => {
 .introduction-content-item {
     border: none;
 }
-
 
 </style>
