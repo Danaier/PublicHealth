@@ -17,7 +17,7 @@ plugins {
     id "ktorm-tools.ktorm-generator" version "1.2.3"
 }
 
-group = 'org.dye'
+group = 'org.csu.phdata'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
 
