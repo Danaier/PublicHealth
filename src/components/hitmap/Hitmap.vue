@@ -1,7 +1,6 @@
 <script setup>
 import {onMounted, ref} from 'vue'
 import * as echarts from 'echarts';
-import axios from "axios";
 import http from '../../utils/request.js';
 import {dayjs} from "element-plus";
 import {diseaseOptions, fixedMapOption, ageRangeMarks, ageRangeValue, formatTooltip, fixedBarOption} from './fixed.js'
@@ -9,6 +8,7 @@ import {findMax, findMin, getSum} from "../../utils/calculation.js";
 import _ from 'lodash';
 import {VideoPause, VideoPlay} from "@element-plus/icons-vue";
 import {diseaseIntroduction} from "./diseaseIntroduction.js";
+import chinaMap from "../../assets/china.json";
 
 
 // 设立一些初始值
@@ -130,13 +130,13 @@ const drawMap = dataInProvinces => {
     }
     mapOption = _.merge(mapOption, fixedMapOption)
     barOption = _.merge(barOption, fixedBarOption)
-    axios.get('/china.json').then(updateChartData);
+    updateChartData();
 }
 
 
 // 更新数据
-const updateChartData = response => {
-    const mapJson = response.data;
+const updateChartData = () => {
+    const mapJson = chinaMap
     hitmapChart.hideLoading();
     echarts.registerMap('China', mapJson);
     option = chartTypeIsMap.value ? mapOption : barOption;
