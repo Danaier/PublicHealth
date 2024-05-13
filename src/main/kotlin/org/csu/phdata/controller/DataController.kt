@@ -2,6 +2,7 @@ package org.csu.phdata.controller
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
+import org.csu.phdata.entity.parameters.ProvinceParameter
 import org.csu.phdata.entity.parameters.RangeParameter
 import org.csu.phdata.entity.parameters.SpecificParameter
 import org.csu.phdata.service.DataService
@@ -44,5 +45,11 @@ class DataController {
     fun getDataInProvinceVaryInDates(
         @RequestBody rangeParameter: RangeParameter
     ) = dataService.getDataInProvincesVaryInDates(rangeParameter)
+
+    @Operation(summary = "单省份分月份查询数据")
+    @PostMapping("getDataVaryInDates")
+    fun getDataVaryInDates(
+        @RequestBody provinceParameter: ProvinceParameter
+    ) = dataService.getDataVaryInDates(provinceParameter)
 
 }
