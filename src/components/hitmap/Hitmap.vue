@@ -60,7 +60,7 @@ const showLineChart = (province) => {
     }
     hitmapChart.showLoading();
     http({
-        url: '/data/getDataVaryInDatesForAProvince',
+        url: '/data/getDataForAProvince',
         data: {
             disease: disease.value,
             dataType: dataType.value,
@@ -71,9 +71,11 @@ const showLineChart = (province) => {
             province: province.name
         },
         method: 'post',
-    }).then(dataInVaryInDatesForAProvince => {
-        let data_dates = Object.keys(dataInVaryInDatesForAProvince)
-        let data_values = Object.values(dataInVaryInDatesForAProvince)
+    }).then(response => {
+        // 加载时间变化折线图
+        let dataVaryInDatesForAProvince = response.dateResult
+        let data_dates = Object.keys(dataVaryInDatesForAProvince)
+        let data_values = Object.values(dataVaryInDatesForAProvince)
         data_dates = data_dates.map(date => dayjs(date).format('YY年MM月'))
         lineOption = {
             title: {
@@ -88,6 +90,9 @@ const showLineChart = (province) => {
         }
         lineOption = _.merge(lineOption, fixedLineOption)
         hitmapChart.setOption(lineOption, true)
+        // 加载年龄分布饼图
+        let dataVaryInAgesForAProvince = response.ageResult
+        drawAgePieChart(dataVaryInAgesForAProvince)
     })
     dataAnalyseInProvince.value = true
     hitmapChart.hideLoading();
@@ -98,6 +103,7 @@ const quitAnalyseInProvince = () => {
     hitmapChart.showLoading();
     dataAnalyseInProvince.value = false
     changeChartType()
+    drawAgePie()
     hitmapChart.hideLoading();
 }
 
@@ -149,7 +155,7 @@ const varyInDates = () => {
     })
 }
 
-// 刷新主图
+// 刷新主图以及年龄饼图
 const refresh = () => {
     hitmapChart.showLoading();
     currentDatePercentage.value = 0;
@@ -208,6 +214,7 @@ const drawAgePie = () => {
 
 // 绘制年龄饼图
 const drawAgePieChart = dataInDates => {
+    console.log(dataInDates)
     dataInDates.sort(((a, b) => {
         const numA = parseInt(a.name);
         const numB = parseInt(b.name);
@@ -220,7 +227,7 @@ const drawAgePieChart = dataInDates => {
     }));
     let agePieOption = {
         title: {
-            text: '年龄分布'
+            text: disease.value + '年龄分布图'
         },
         series: [{
             data: dataInDates
@@ -238,9 +245,7 @@ const drawMap = dataInProvinces => {
     let maxNum = dataInProvinces.reduce(findMax, dataInProvinces[0]).value + averageNum
     let minNum = dataInProvinces.reduce(findMin, dataInProvinces[0]).value - averageNum
     minNum = minNum < 0 ? 0 : minNum
-    dataInProvinces.sort(function (a, b) {
-        return a.value - b.value;
-    });
+
     mapOption = {
         title: {
             text: disease.value,
@@ -256,6 +261,9 @@ const drawMap = dataInProvinces => {
             }
         ]
     };
+    dataInProvinces.sort(function (a, b) {
+        return b.value - a.value;
+    });
     pieOption = {
         title: {
             text: disease.value,
@@ -264,6 +272,9 @@ const drawMap = dataInProvinces => {
             data: dataInProvinces
         }]
     }
+    dataInProvinces.sort(function (a, b) {
+        return a.value - b.value;
+    });
     dataInProvinces = dataInProvinces.slice(-20)
     barOption = {
         yAxis: {

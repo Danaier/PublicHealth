@@ -102,16 +102,12 @@ export const fixedPieOption = {
     tooltip: {
         trigger: 'item',
     },
-    legend: {
-        type: 'scroll',
-        top: "bottom",
-    },
     toolbox: {
         show: false,
     },
     series: [{
         type: 'pie',
-        radius: ['20%', '80%'],
+        radius: ['15%', '80%'],
         avoidLabelOverlap: false,
         itemStyle: {
             borderRadius: 7,
