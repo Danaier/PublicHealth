@@ -6,6 +6,7 @@ import {dayjs} from "element-plus";
 import {
     diseaseOptions,
     fixedMapOption,
+    fixedPieOption,
     ageRangeMarks,
     ageRangeValue,
     formatAge,
@@ -48,6 +49,7 @@ let hitmapChart
 let option
 let mapOption
 let barOption
+let pieOption
 
 let lineOption
 
@@ -58,7 +60,7 @@ const showLineChart = (province) => {
     }
     hitmapChart.showLoading();
     http({
-        url: '/data/getDataVaryInDates',
+        url: '/data/getDataVaryInDatesForAProvince',
         data: {
             disease: disease.value,
             dataType: dataType.value,
@@ -69,9 +71,9 @@ const showLineChart = (province) => {
             province: province.name
         },
         method: 'post',
-    }).then(dataInProvincesVaryInDates => {
-        let data_dates = Object.keys(dataInProvincesVaryInDates)
-        let data_values = Object.values(dataInProvincesVaryInDates)
+    }).then(dataInVaryInDatesForAProvince => {
+        let data_dates = Object.keys(dataInVaryInDatesForAProvince)
+        let data_values = Object.values(dataInVaryInDatesForAProvince)
         data_dates = data_dates.map(date => dayjs(date).format('YY年MM月'))
         lineOption = {
             title: {
@@ -147,7 +149,7 @@ const varyInDates = () => {
     })
 }
 
-// 刷新地图
+// 刷新主图
 const refresh = () => {
     hitmapChart.showLoading();
     currentDatePercentage.value = 0;
@@ -164,6 +166,9 @@ const changeChartType = () => {
             break;
         case '条形图':
             option = barOption;
+            break;
+        case '饼状图':
+            option = pieOption;
             break;
     }
     hitmapChart.setOption(option, true);
@@ -226,7 +231,7 @@ const drawAgePieChart = dataInDates => {
 }
 
 
-// 绘制分布图和条形图
+// 绘制主图
 const drawMap = dataInProvinces => {
     // 计算图例的最大值和最小值
     let averageNum = dataInProvinces.reduce(getSum, 0) / dataInProvinces.length;
@@ -251,6 +256,14 @@ const drawMap = dataInProvinces => {
             }
         ]
     };
+    pieOption = {
+        title: {
+            text: disease.value,
+        },
+        series: [{
+            data: dataInProvinces
+        }]
+    }
     dataInProvinces = dataInProvinces.slice(-20)
     barOption = {
         yAxis: {
@@ -263,6 +276,7 @@ const drawMap = dataInProvinces => {
     }
     mapOption = _.merge(mapOption, fixedMapOption)
     barOption = _.merge(barOption, fixedBarOption)
+    pieOption = _.merge(pieOption, fixedPieOption)
     updateChartData();
 }
 
@@ -278,6 +292,9 @@ const updateChartData = () => {
             break;
         case '条形图':
             option = barOption;
+            break;
+        case '饼状图':
+            option = pieOption;
             break;
     }
     hitmapChart.setOption(option, true);

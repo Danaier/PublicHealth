@@ -98,6 +98,42 @@ export const fixedLineOption = {
         }
     ]
 };
+export const fixedPieOption = {
+    tooltip: {
+        trigger: 'item',
+    },
+    legend: {
+        type: 'scroll',
+        top: "bottom",
+    },
+    toolbox: {
+        show: false,
+    },
+    series: [{
+        type: 'pie',
+        radius: ['20%', '80%'],
+        avoidLabelOverlap: false,
+        itemStyle: {
+            borderRadius: 7,
+            borderColor: '#fff',
+            borderWidth: 2
+        },
+        label: {
+            show: true,
+            position: 'outside'
+        },
+        emphasis: {
+            label: {
+                show: true,
+                fontSize: 30,
+                fontWeight: 'bold'
+            }
+        },
+        labelLine: {
+            show: true
+        },
+    }]
+}
 
 export const fixedAgePieOption = {
     tooltip: {
