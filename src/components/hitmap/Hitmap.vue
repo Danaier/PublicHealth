@@ -161,6 +161,7 @@ const refresh = () => {
     currentDatePercentage.value = 0;
     currentChosenDate.value = dayjs(monthRange.value[0]).format('YY年MM月');
     pauseTheProgress.value = false;
+    dataAnalyseInProvince.value = false
     drawMainChart();
     drawAgePie()
 }
