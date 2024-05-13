@@ -175,31 +175,48 @@ class DataService {
         return CommonResponse.createForSuccess(dataInProvincesVaryInDates.sortedBy { it.date })
     }
 
-    fun getDataVaryInDatesForAProvince(provinceParameter: ProvinceParameter): CommonResponse<*> {
+    fun getDataForAProvince(provinceParameter: ProvinceParameter): CommonResponse<*> {
         val publicHealthDataList = getRangeDataListFroAProvinceFromDao(provinceParameter)
+        // 分日期
         val datedPHDataLists = publicHealthDataList.groupBy { it.monthDate }
         val dateValveMap = mutableMapOf<String, Int>()
         for ((monthDate, datedPHDataList) in datedPHDataLists) {
             val sum = datedPHDataList.sumOf { it.dataValue.toInt() }
             dateValveMap[monthDate.toString()] = sum
         }
-        return CommonResponse.createForSuccess(dateValveMap)
+        val ageValueMap = mutableMapOf<String, Int>()
+        for (publicHealthData in publicHealthDataList) {
+            val age = publicHealthData.age
+            val dataValue = publicHealthData.dataValue.toInt()
+            // 在Map的对应键中加入dataValue的值
+            ageValueMap[age] = (ageValueMap[age]?.plus(dataValue))?:(dataValue)
+        }
+        // 分年龄
+        val ageResultList = mutableListOf<DataOfAProvince>()
+        for (key in ageValueMap.keys) {
+            // provinceValueMap[key]存在时创建ResultData对象，若创建成功则在resultList中加入它
+            ageValueMap[key]?.let { DataOfAProvince(key, it) }?.let { ageResultList.add(it) }
+        }
+
+        data class Result(val dateResult:MutableMap<String, Int>, val ageResult:MutableList<DataOfAProvince>): Serializable
+
+        return CommonResponse.createForSuccess(Result(dateValveMap, ageResultList))
     }
 
     fun getDataVaryInAges(rangeParameter: RangeParameter): CommonResponse<*> {
 
         val publicHealthDataList = getRangeDataListFromDao(rangeParameter)
-        val provinceValueMap = mutableMapOf<String, Int>()
+        val ageValueMap = mutableMapOf<String, Int>()
         for (publicHealthData in publicHealthDataList) {
             val age = publicHealthData.age
             val dataValue = publicHealthData.dataValue.toInt()
             // 在Map的对应键中加入dataValue的值
-            provinceValueMap[age] = (provinceValueMap[age]?.plus(dataValue))?:(dataValue)
+            ageValueMap[age] = (ageValueMap[age]?.plus(dataValue))?:(dataValue)
         }
         val resultList = mutableListOf<DataOfAProvince>()
-        for (key in provinceValueMap.keys) {
+        for (key in ageValueMap.keys) {
             // provinceValueMap[key]存在时创建ResultData对象，若创建成功则在resultList中加入它
-            provinceValueMap[key]?.let { DataOfAProvince(key, it) }?.let { resultList.add(it) }
+            ageValueMap[key]?.let { DataOfAProvince(key, it) }?.let { resultList.add(it) }
         }
 
         return CommonResponse.createForSuccess(resultList)
