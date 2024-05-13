@@ -99,6 +99,44 @@ export const fixedLineOption = {
     ]
 };
 
+export const fixedAgePieOption = {
+    tooltip: {
+        trigger: 'item',
+        formatter: '{b}: {d}%'
+    },
+    legend: {
+        type: 'scroll',
+        top: "bottom",
+    },
+    toolbox: {
+        show: false,
+    },
+    series: [{
+        type: 'pie',
+        radius: ['20%', '80%'],
+        avoidLabelOverlap: false,
+        itemStyle: {
+            borderRadius: 7,
+            borderColor: '#fff',
+            borderWidth: 2
+        },
+        label: {
+            show: true,
+            position: 'inside'
+        },
+        emphasis: {
+            label: {
+                show: true,
+                fontSize: 30,
+                fontWeight: 'bold'
+            }
+        },
+        labelLine: {
+            show: true
+        },
+    }]
+}
+
 export const diseaseOptions = [
     {value: "出血热", label: "出血热"},
     {value: "包虫病", label: "包虫病"},
@@ -164,6 +202,6 @@ export const ageRangeValue = ref({
     15: '75-',
     16: '80-'
 })
-export const formatTooltip = (val) => {
+export const formatAge = (val) => {
     return ageRangeMarks.value[val].replace('-', '岁')
 }

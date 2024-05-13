@@ -1,19 +1,20 @@
 <script setup>
 import {onMounted, ref} from 'vue'
 import * as echarts from 'echarts';
-import http from '../../utils/request.js';
+import http from '../../utils/http.js';
 import {dayjs} from "element-plus";
 import {
     diseaseOptions,
     fixedMapOption,
     ageRangeMarks,
     ageRangeValue,
-    formatTooltip,
+    formatAge,
     fixedBarOption,
     fixedLineOption,
     chartTypeOptions,
+    fixedAgePieOption,
 } from './fixed.js'
-import {findMax, findMin, getSum} from "../../utils/calculation.js";
+import {aggregateAge, findMax, findMin, getSum} from "../../utils/calculation.js";
 import _ from 'lodash';
 import {VideoPause, VideoPlay} from "@element-plus/icons-vue";
 import {diseaseIntroduction} from "./diseaseIntroduction.js";
@@ -34,11 +35,14 @@ const pauseTheProgress = ref(false)
 // 地图类型
 const chartType = ref("分布图")
 
-const DiseaseIntroActivePage = ref('1')
+const DiseaseIntroActivePage = ref('')
 
 const dataAnalyseInProvince = ref(false)
 
+const showAgePieChart = ref(true)
+
 let hitmap
+let agePieChart
 
 let hitmapChart
 let option
@@ -95,6 +99,23 @@ const quitAnalyseInProvince = () => {
     hitmapChart.hideLoading();
 }
 
+// 改变右侧介绍面板
+const changeIntro = () => {
+    if (DiseaseIntroActivePage.value.length === 0) {
+        setTimeout(() => {
+            showAgePieChart.value = true
+            drawAgePie()
+        }, 300);
+        setTimeout(() => {
+            agePieChart = document.getElementById('agePieChart');
+            agePieChart = echarts.init(agePieChart);
+            drawAgePie()
+        }, 400);
+    } else {
+        showAgePieChart.value = false
+    }
+}
+
 // 时间演变
 const varyInDates = () => {
     pauseTheProgress.value = !pauseTheProgress.value
@@ -132,18 +153,8 @@ const refresh = () => {
     currentDatePercentage.value = 0;
     currentChosenDate.value = dayjs(monthRange.value[0]).format('YY年MM月');
     pauseTheProgress.value = false;
-    http({
-        url: '/data/getDataInProvinces',
-        data: {
-            disease: disease.value,
-            dataType: dataType.value,
-            age: ageRangeValue.value[ageRange.value[0]],
-            nextAge: ageRangeValue.value[ageRange.value[1]],
-            date: dayjs(monthRange.value[0]).format('YYYY-MM-DD'),
-            nextDate: dayjs(monthRange.value[1]).format('YYYY-MM-DD')
-        },
-        method: 'post',
-    }).then(drawMap)
+    drawMainChart();
+    drawAgePie()
 }
 
 const changeChartType = () => {
@@ -158,8 +169,64 @@ const changeChartType = () => {
     hitmapChart.setOption(option, true);
 }
 
+// 加载主图
+const drawMainChart = () => {
+    http({
+        url: '/data/getDataInProvinces',
+        data: {
+            disease: disease.value,
+            dataType: dataType.value,
+            age: ageRangeValue.value[ageRange.value[0]],
+            nextAge: ageRangeValue.value[ageRange.value[1]],
+            date: dayjs(monthRange.value[0]).format('YYYY-MM-DD'),
+            nextDate: dayjs(monthRange.value[1]).format('YYYY-MM-DD')
+        },
+        method: 'post',
+    }).then(drawMap)
+}
 
-// 绘制地图
+// 加载年龄饼图
+const drawAgePie = () => {
+    http({
+        url: '/data/getDataVaryInAges',
+        data: {
+            disease: disease.value,
+            dataType: dataType.value,
+            age: ageRangeValue.value[ageRange.value[0]],
+            nextAge: ageRangeValue.value[ageRange.value[1]],
+            date: dayjs(monthRange.value[0]).format('YYYY-MM-DD'),
+            nextDate: dayjs(monthRange.value[1]).format('YYYY-MM-DD')
+        },
+        method: 'post',
+    }).then(drawAgePieChart)
+}
+
+// 绘制年龄饼图
+const drawAgePieChart = dataInDates => {
+    dataInDates.sort(((a, b) => {
+        const numA = parseInt(a.name);
+        const numB = parseInt(b.name);
+        return numA - numB;
+    }))
+    dataInDates = aggregateAge(dataInDates);
+    dataInDates = dataInDates.map(item => ({
+        ...item,
+        name: item.name.replace('-', '岁')
+    }));
+    let agePieOption = {
+        title: {
+            text: '年龄分布'
+        },
+        series: [{
+            data: dataInDates
+        }]
+    }
+    agePieOption = _.merge(agePieOption, fixedAgePieOption)
+    agePieChart.setOption(agePieOption)
+}
+
+
+// 绘制分布图和条形图
 const drawMap = dataInProvinces => {
     // 计算图例的最大值和最小值
     let averageNum = dataInProvinces.reduce(getSum, 0) / dataInProvinces.length;
@@ -223,6 +290,10 @@ onMounted(() => {
     hitmap = document.getElementById('hitmap');
     hitmapChart = echarts.init(hitmap);
     hitmapChart.on('click', 'series', showLineChart);
+
+    // 初始化年龄饼图
+    agePieChart = document.getElementById('agePieChart');
+    agePieChart = echarts.init(agePieChart);
 
     refresh();
 
@@ -355,7 +426,7 @@ onMounted(() => {
                   v-model="ageRange"
                   range
                   :marks="ageRangeMarks"
-                  :format-tooltip="formatTooltip"
+                  :format-tooltip="formatAge"
                   :min=0
                   :max=16
                   :step=1
@@ -366,17 +437,21 @@ onMounted(() => {
           </div>
         </el-card>
 
-        <!-- 病种介绍部分 -->
-        <div class="introduction-content">
-          <el-card style="width: 350px;height: 100%">
-            <el-collapse accordion v-model="DiseaseIntroActivePage" style="border: none">
+        <div class="right-content">
+          <!-- 病种介绍部分 -->
+          <el-card style="width: 350px;flex-grow: 1;">
+            <el-collapse
+                accordion v-model="DiseaseIntroActivePage"
+                style="border: none"
+                @change="changeIntro"
+            >
 
               <el-card class="introduction-content-item" shadow="hover">
                 <el-collapse-item name="1">
                   <template #title>
                     <h3>{{ disease }}</h3>
                   </template>
-                  <el-scrollbar max-height="380px">
+                  <el-scrollbar max-height="370px">
                     {{ diseaseIntroduction.find(item => item.name === disease).briefIntroduction }}
                   </el-scrollbar>
                 </el-collapse-item>
@@ -387,7 +462,7 @@ onMounted(() => {
                   <template #title>
                     <h3>病因</h3>
                   </template>
-                  <el-scrollbar max-height="380px">
+                  <el-scrollbar max-height="370px">
                     {{ diseaseIntroduction.find(item => item.name === disease).etiology }}
                   </el-scrollbar>
                 </el-collapse-item>
@@ -398,7 +473,7 @@ onMounted(() => {
                   <template #title>
                     <h3>临床表现</h3>
                   </template>
-                  <el-scrollbar max-height="380px">
+                  <el-scrollbar max-height="370px">
                     {{ diseaseIntroduction.find(item => item.name === disease).clinicalPicture }}
                   </el-scrollbar>
                 </el-collapse-item>
@@ -409,13 +484,21 @@ onMounted(() => {
                   <template #title>
                     <h3>治疗方法</h3>
                   </template>
-                  <el-scrollbar max-height="380px">
+                  <el-scrollbar max-height="370px">
                     {{ diseaseIntroduction.find(item => item.name === disease).treatment }}
                   </el-scrollbar>
                 </el-collapse-item>
               </el-card>
 
             </el-collapse>
+          </el-card>
+          <el-card
+              style="width: 350px;height: 383px"
+              v-if="showAgePieChart"
+          >
+            <div id="agePieChart"
+                 style="width: 310px;height: 343px"
+            ></div>
           </el-card>
         </div>
 
@@ -430,6 +513,12 @@ onMounted(() => {
 <style scoped>
 
 .chart-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.right-content {
     display: flex;
     flex-direction: column;
     gap: 10px;
