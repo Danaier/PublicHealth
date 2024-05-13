@@ -47,9 +47,15 @@ class DataController {
     ) = dataService.getDataInProvincesVaryInDates(rangeParameter)
 
     @Operation(summary = "单省份分月份查询数据")
-    @PostMapping("getDataVaryInDates")
-    fun getDataVaryInDates(
+    @PostMapping("getDataVaryInDatesForAProvince")
+    fun getDataVaryInDatesForAProvince(
         @RequestBody provinceParameter: ProvinceParameter
-    ) = dataService.getDataVaryInDates(provinceParameter)
+    ) = dataService.getDataVaryInDatesForAProvince(provinceParameter)
+
+    @Operation(summary = "分年龄查询数据")
+    @PostMapping("getDataVaryInAges")
+    fun getDataVaryInAges(
+        @RequestBody rangeParameter: RangeParameter
+    ) = dataService.getDataVaryInAges(rangeParameter)
 
 }

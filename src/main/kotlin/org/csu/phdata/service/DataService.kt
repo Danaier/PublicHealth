@@ -1,7 +1,5 @@
 package org.csu.phdata.service
 
-import lombok.extern.slf4j.Slf4j
-import mu.KotlinLogging
 import org.csu.phdata.common.CommonResponse
 import org.csu.phdata.common.Constants
 import org.csu.phdata.entity.PublicHealthData
@@ -24,8 +22,6 @@ import java.time.LocalDate
 
 @Service
 class DataService {
-
-    private val logger = KotlinLogging.logger {}
 
     @Autowired
     lateinit var phDataDao: PHDataDao
@@ -179,7 +175,7 @@ class DataService {
         return CommonResponse.createForSuccess(dataInProvincesVaryInDates.sortedBy { it.date })
     }
 
-    fun getDataVaryInDates(provinceParameter: ProvinceParameter): CommonResponse<*> {
+    fun getDataVaryInDatesForAProvince(provinceParameter: ProvinceParameter): CommonResponse<*> {
         val publicHealthDataList = getRangeDataListFroAProvinceFromDao(provinceParameter)
         val datedPHDataLists = publicHealthDataList.groupBy { it.monthDate }
         val dateValveMap = mutableMapOf<String, Int>()
@@ -188,6 +184,25 @@ class DataService {
             dateValveMap[monthDate.toString()] = sum
         }
         return CommonResponse.createForSuccess(dateValveMap)
+    }
+
+    fun getDataVaryInAges(rangeParameter: RangeParameter): CommonResponse<*> {
+
+        val publicHealthDataList = getRangeDataListFromDao(rangeParameter)
+        val provinceValueMap = mutableMapOf<String, Int>()
+        for (publicHealthData in publicHealthDataList) {
+            val age = publicHealthData.age
+            val dataValue = publicHealthData.dataValue.toInt()
+            // 在Map的对应键中加入dataValue的值
+            provinceValueMap[age] = (provinceValueMap[age]?.plus(dataValue))?:(dataValue)
+        }
+        val resultList = mutableListOf<DataOfAProvince>()
+        for (key in provinceValueMap.keys) {
+            // provinceValueMap[key]存在时创建ResultData对象，若创建成功则在resultList中加入它
+            provinceValueMap[key]?.let { DataOfAProvince(key, it) }?.let { resultList.add(it) }
+        }
+
+        return CommonResponse.createForSuccess(resultList)
     }
 
 }
