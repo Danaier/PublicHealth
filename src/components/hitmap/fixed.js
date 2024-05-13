@@ -84,7 +84,20 @@ export const fixedBarOption = {
         id: '病种',
         universalTransition: true
     }
-}
+};
+export const fixedLineOption = {
+    xAxis: {
+        type: 'category',
+    },
+    yAxis: {
+        type: 'value'
+    },
+    series: [
+        {
+            type: 'line'
+        }
+    ]
+};
 
 export const diseaseOptions = [
     {value: "出血热", label: "出血热"},
@@ -106,6 +119,12 @@ export const diseaseOptions = [
     {value: "麻风病", label: "麻风病"},
     {value: "黑热病", label: "黑热病"}
 ];
+
+export const chartTypeOptions = [
+    {value: "分布图", label: "分布图"},
+    {value: "条形图", label: "条形图"},
+    {value: "饼状图", label: "饼状图"},
+]
 
 export const ageRangeMarks = ref({
     0: '0岁',

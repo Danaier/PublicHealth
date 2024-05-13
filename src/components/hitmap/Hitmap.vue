@@ -3,7 +3,16 @@ import {onMounted, ref} from 'vue'
 import * as echarts from 'echarts';
 import http from '../../utils/request.js';
 import {dayjs} from "element-plus";
-import {diseaseOptions, fixedMapOption, ageRangeMarks, ageRangeValue, formatTooltip, fixedBarOption} from './fixed.js'
+import {
+    diseaseOptions,
+    fixedMapOption,
+    ageRangeMarks,
+    ageRangeValue,
+    formatTooltip,
+    fixedBarOption,
+    fixedLineOption,
+    chartTypeOptions,
+} from './fixed.js'
 import {findMax, findMin, getSum} from "../../utils/calculation.js";
 import _ from 'lodash';
 import {VideoPause, VideoPlay} from "@element-plus/icons-vue";
@@ -23,22 +32,67 @@ const currentDatePercentage = ref(0)
 const pauseTheProgress = ref(false)
 
 // 地图类型
-const chartTypeIsMap = ref(true)
+const chartType = ref("分布图")
 
-const activeName = ref('1')
+const DiseaseIntroActivePage = ref('1')
 
-let option
+const dataAnalyseInProvince = ref(false)
+
 let hitmap
+
 let hitmapChart
+let option
 let mapOption
 let barOption
 
+let lineOption
 
-// 切换图表类型
-const switchChartType = () => {
-    chartTypeIsMap.value = !chartTypeIsMap.value;
-    option = chartTypeIsMap.value ? mapOption : barOption;
-    hitmapChart.setOption(option, true);
+// 点击具体省份折线图
+const showLineChart = (province) => {
+    if (dataAnalyseInProvince.value) {
+        return
+    }
+    hitmapChart.showLoading();
+    http({
+        url: '/data/getDataVaryInDates',
+        data: {
+            disease: disease.value,
+            dataType: dataType.value,
+            age: ageRangeValue.value[ageRange.value[0]],
+            nextAge: ageRangeValue.value[ageRange.value[1]],
+            date: dayjs(monthRange.value[0]).format('YYYY-MM-DD'),
+            nextDate: dayjs(monthRange.value[1]).format('YYYY-MM-DD'),
+            province: province.name
+        },
+        method: 'post',
+    }).then(dataInProvincesVaryInDates => {
+        let data_dates = Object.keys(dataInProvincesVaryInDates)
+        let data_values = Object.values(dataInProvincesVaryInDates)
+        data_dates = data_dates.map(date => dayjs(date).format('YY年MM月'))
+        lineOption = {
+            title: {
+                text: province.name + ' ' + disease.value + ' 随时间变化折线图'
+            },
+            xAxis: {
+                data: data_dates
+            },
+            series: [{
+                data: data_values
+            }]
+        }
+        lineOption = _.merge(lineOption, fixedLineOption)
+        hitmapChart.setOption(lineOption, true)
+    })
+    dataAnalyseInProvince.value = true
+    hitmapChart.hideLoading();
+}
+
+// 点击返回**图
+const quitAnalyseInProvince = () => {
+    hitmapChart.showLoading();
+    dataAnalyseInProvince.value = false
+    changeChartType()
+    hitmapChart.hideLoading();
 }
 
 // 时间演变
@@ -92,6 +146,18 @@ const refresh = () => {
     }).then(drawMap)
 }
 
+const changeChartType = () => {
+    switch (chartType.value) {
+        case '分布图':
+            option = mapOption;
+            break;
+        case '条形图':
+            option = barOption;
+            break;
+    }
+    hitmapChart.setOption(option, true);
+}
+
 
 // 绘制地图
 const drawMap = dataInProvinces => {
@@ -139,8 +205,15 @@ const updateChartData = () => {
     const mapJson = chinaMap
     hitmapChart.hideLoading();
     echarts.registerMap('China', mapJson);
-    option = chartTypeIsMap.value ? mapOption : barOption;
-    hitmapChart.setOption(option);
+    switch (chartType.value) {
+        case '分布图':
+            option = mapOption;
+            break;
+        case '条形图':
+            option = barOption;
+            break;
+    }
+    hitmapChart.setOption(option, true);
 }
 
 
@@ -149,6 +222,7 @@ onMounted(() => {
     // 初始化地图
     hitmap = document.getElementById('hitmap');
     hitmapChart = echarts.init(hitmap);
+    hitmapChart.on('click', 'series', showLineChart);
 
     refresh();
 
@@ -205,33 +279,56 @@ onMounted(() => {
               </el-tooltip>
 
               <!-- 时间演变按钮 -->
-              <el-button
-                  type="primary"
-                  @click="varyInDates"
+              <el-tooltip
+                  class="box-item"
+                  effect="light"
+                  content="开始时间演变"
+                  placement="bottom"
               >
-                <el-icon v-if="!pauseTheProgress">
-                  <el-tooltip
-                      class="box-item"
-                      effect="light"
-                      content="开始时间演变"
-                      placement="bottom"
-                  >
+                <el-button
+                    type="primary"
+                    @click="varyInDates"
+                >
+                  <el-icon v-if="!pauseTheProgress">
                     <VideoPlay/>
-                  </el-tooltip>
-                </el-icon>
-                <el-icon v-if="pauseTheProgress">
-                  <VideoPause/>
-                </el-icon>
-              </el-button>
+                  </el-icon>
+                  <el-icon v-if="pauseTheProgress">
+                    <VideoPause/>
+                  </el-icon>
+                </el-button>
+              </el-tooltip>
 
-              <!-- 切换展示类型按钮 -->
-              <el-button
-                  type="primary"
-                  @click="switchChartType"
+              <!-- 取消省内分析按钮 -->
+              <div
+                  style="width: 100px"
+                  v-if="dataAnalyseInProvince"
               >
-                <span v-if="chartTypeIsMap">切换至条形图</span>
-                <span v-if="!chartTypeIsMap">切换至分布图</span>
-              </el-button>
+                <el-button
+                    type="primary"
+                    @click="quitAnalyseInProvince"
+                >
+                  <span>返回{{ chartType }}</span>
+                </el-button>
+              </div>
+
+
+              <!-- 图表类型选择 -->
+              <div
+                  style="width: 100px"
+                  v-if="!dataAnalyseInProvince"
+              >
+                <el-select
+                    v-model="chartType"
+                    placeholder="Select"
+                    @change="changeChartType"
+                >
+                  <el-option
+                      v-for="item in chartTypeOptions"
+                      :label="item.label"
+                      :value="item.value"
+                  />
+                </el-select>
+              </div>
 
             </div>
 
@@ -272,7 +369,7 @@ onMounted(() => {
         <!-- 病种介绍部分 -->
         <div class="introduction-content">
           <el-card style="width: 350px;height: 100%">
-            <el-collapse accordion v-model="activeName" style="border: none">
+            <el-collapse accordion v-model="DiseaseIntroActivePage" style="border: none">
 
               <el-card class="introduction-content-item" shadow="hover">
                 <el-collapse-item name="1">
