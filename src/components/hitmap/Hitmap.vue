@@ -42,6 +42,8 @@ const dataAnalyseInProvince = ref(false)
 
 const showAgePieChart = ref(true)
 
+const selectedProvince = ref('')
+
 let hitmap
 let agePieChart
 
@@ -91,6 +93,7 @@ const showLineChart = (province) => {
         lineOption = _.merge(lineOption, fixedLineOption)
         hitmapChart.setOption(lineOption, true)
         // 加载年龄分布饼图
+        selectedProvince.value = province.name
         let dataVaryInAgesForAProvince = response.ageResult
         drawAgePieChart(dataVaryInAgesForAProvince)
     })
@@ -102,6 +105,7 @@ const showLineChart = (province) => {
 const quitAnalyseInProvince = () => {
     hitmapChart.showLoading();
     dataAnalyseInProvince.value = false
+    selectedProvince.value = ''
     changeChartType()
     drawAgePie()
     hitmapChart.hideLoading();
@@ -162,6 +166,7 @@ const refresh = () => {
     currentChosenDate.value = dayjs(monthRange.value[0]).format('YY年MM月');
     pauseTheProgress.value = false;
     dataAnalyseInProvince.value = false
+    selectedProvince.value = ''
     drawMainChart();
     drawAgePie()
 }
@@ -215,7 +220,6 @@ const drawAgePie = () => {
 
 // 绘制年龄饼图
 const drawAgePieChart = dataInDates => {
-    console.log(dataInDates)
     dataInDates.sort(((a, b) => {
         const numA = parseInt(a.name);
         const numB = parseInt(b.name);
@@ -228,7 +232,7 @@ const drawAgePieChart = dataInDates => {
     }));
     let agePieOption = {
         title: {
-            text: disease.value + '年龄分布图'
+            text: selectedProvince.value + ' ' + disease.value + ' 年龄分布图'
         },
         series: [{
             data: dataInDates
